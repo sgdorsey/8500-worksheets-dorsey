@@ -1,0 +1,264 @@
+---
+title: 'Worksheet 3: Data Manipulation'
+author: ""
+date: ""
+---
+
+_This is the third in a series of worksheets for History 8500 at Clemson University. The goal of these worksheets is simple: practice, practice, practice. The worksheet introduces concepts and techniques and includes prompts for you to practice in this interactive document. When you are finished, you should change the author name (above), render your document to a pdf, and upload it to canvas. Don't forget to commit your changes as you go and push to github when you finish the worksheet._
+
+R has powerful tools for manipulating data. The Tidyverse is a collection of packages for R that are designed for data science. Take a look at the website for the Tidyverse and the list of packages that are included at: [https://www.tidyverse.org/packages/](https://www.tidyverse.org/packages/)
+
+## A Grammar of Data Manipulation with `dplyr()`
+
+We'll start with **dplyr** which is described as "a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges." The verbs included in this package are: 
+
+* `select()`: picks variables based on their names.
+* `mutate()`: adds new variables that are functions of existing variables.
+* `filter()`: picks cases based on their values.
+* `summarise()`: reduces multiple values down to a single summary.
+* `arrange()`: changes the ordering of the rows.
+
+All of these verbs play nicely and combine naturally with `group_by()` which allows you to perform any operation “by group”.
+
+Lets load some data and libraries for our work. 
+```{r}
+library(DigitalMethodsData)
+library(tidyverse)
+library(magrittr)
+data("gayguides")
+```
+
+### Select
+Lets start with `select()`. This function allows you to subset columns using their names and types. The `eval: false` line is a chunk option that simply prevents Quarto from printing 60k rows of data in your final rendered document. You can still run the chunk as you normally would.
+```{r}
+#| eval: false
+gayguides %>% 
+  select(title, Year)
+```
+Notice that this subsetted the data and returned only the title and year. However, it didn't modify the `gayguides` data or save it to a new variable because we didn't assign the result to anything. 
+
+(@) Use `select()` to take the city and state from gayguides and add them to a dataframe called "locations". 
+```{r}
+
+```
+
+(@) What did you do to save the data to a new data frame? Why? 
+
+>
+
+(@) Can you use `select()` to grab all the columns of `gayguides` EXCEPT for the city and state? Hint: You might want to read the documentation for this function. 
+```{r}
+
+```
+
+### Filter
+The filter function subsets a data frame and retains all the rows that satisfy your conditions. To be retained, the row must produce a value of TRUE for _all_ of the conditions you provide. 
+
+```{r}
+#| eval: false
+
+gayguides %>% filter(Year > 1980)
+```
+
+Filter also works with the logical values we learned earlier this semester.
+
+```{r}
+#| eval: false
+gayguides %>% filter(Year == 1970 | Year == 1980)
+```
+And strings: 
+```{r}
+#| eval: false
+gayguides %>% 
+  filter(city == "Greenville")
+```
+
+(@) The above code grabs every location where the city is Greenville. However, there is more than one city named Greenville. Can you filter to retrieve Greenville, SC? 
+
+```{r}
+
+```
+
+(@) How about every location between 1975 and 1980? 
+
+```{r}
+
+```
+
+
+(@) Every entry in Greenville, SC between 1975 and 1980? 
+
+```{r}
+
+```
+
+(@) Can you find all locations in 1975 except for New York and San Francisco? 
+```{r}
+
+```
+
+(@) The amenity features column in gay guides contains a comma separated list of categorizations. (G), for example, stands for girls. However, this language changed over time and women's locations eventually are described as (L). What if we want to filter by any entry that has (G) OR (L) in the amenity feature column?  This is a bit more complicated because the entries are a comma separated list and (G) or (L) is often paired with other categorizations. How might you _search the dataframe for entries that match_ (G) or (L)?
+```{r}
+
+```
+
+### Mutate
+The `mutate()` function adds new variables and preserves existing one. This is useful when you want to create a new column based on other values. For example, in the `statepopulation` dataset, we want to ask "How much did the population increase between 1800 and 1900 in each state?." We can do that by subtracting the population in 1900 from 1800 and storing that value in a new column. 
+
+```{r}
+#| eval: false
+data("statepopulations")
+statepopulations %>% mutate(difference = X1900 - X1800) 
+```
+
+(@) In the Boston Women Voters dataset, every voter is given an age. Can you use their age to calculate each person's birth year? (Assume all this data was collected in 1920.)
+```{r}
+
+```
+
+(@) Can you create a new column that combines the city and state columns in `gayguides` into a new column called location? It should list the city, state. (i.e. San Diego, CA)
+
+```{r}
+
+```
+
+### Working with Text: Introduction to `stringr`
+
+When working with historical data, we often need to clean and manipulate text. The `stringr` package (part of tidyverse) provides tools for working with strings.
+
+Common `stringr` functions:
+- `str_to_lower()`: convert to lowercase
+- `str_to_upper()`: convert to uppercase  
+- `str_trim()`: remove leading/trailing whitespace
+- `str_detect()`: detect if a pattern exists
+- `str_replace()`: replace patterns
+```{r}
+# Convert city names to uppercase
+gayguides %>% 
+  mutate(city_upper = str_to_upper(city)) %>%
+  select(city, city_upper) %>%
+  head()
+```
+
+(@) Many city names in the gayguides data have inconsistent capitalization. Can you create a new column that standardizes all city names to title case using `str_to_title()`?
+```{r}
+```
+
+(@) The `amenityfeatures` column contains codes for different features of each location. These are abbreviations in parentheses like (D) for dancing, (E) for entertainment, (G) for girls/women, etc. Can you create a new column called `has_dancing` that is TRUE if the amenity features include "(D)"? (Hint: Use `grepl()` to search for "(D)" within the amenityfeatures column.
+```{r}
+
+```
+
+(@) In the Boston Women Voters data, occupation names may have extra whitespace. Use `str_trim()` to clean the occupation column.
+```{r}
+```
+
+### Arrange
+`Arrange()` orders the rows of a data frame by the values of selected columns. In other words it sorts a data frame by a variable. In the `gayguides` data, we can sort the data by year with the earliest year first. If we wanted the latest year first, we could do so by using the `desc()` function. 
+
+```{r}
+#| eval: false
+
+gayguides %>%
+  arrange(Year)
+
+gayguides %>%
+  arrange(desc(Year))
+```
+
+
+(@) Using the `statepopulation` data, which state has the largest population in 1850? Write code that pulls only the relevant columns (state and 1850) and sorts it accordingly. 
+```{r}
+
+```
+
+
+### Handling Missing Data
+
+Real historical data often has missing values (represented as `NA` in R). We need to know how to identify and handle them. We can use `is.na()` to check if a row contains an NA value. This function returns TRUE/FALSE values for each row.
+```{r}
+data("BostonWomenVoters")
+is.na(BostonWomenVoters$Ward)
+```
+
+We can test if an individual row is NA:
+```{r}
+is.na(BostonWomenVoters$Ward[10669])
+```
+
+Or get a count of how many are present in this dataset
+```{r}
+sum(is.na(BostonWomenVoters$Ward))
+```
+
+The `tidyr` package (part of tidyverse) has useful functions:
+- `drop_na()`: remove rows with ANY missing values
+- `drop_na(column)`: remove rows with missing values in specific column
+```{r}
+library(tidyr)
+# Remove rows where Ward is missing
+BostonWomenVoters %>% 
+  drop_na(Ward)
+
+# Check how many rows remain
+BostonWomenVoters %>% 
+  drop_na(Ward) %>%
+  nrow()
+```
+
+(@) How many rows in the BostonWomenVoters dataset have missing ward information? 
+```{r}
+```
+
+(@) Why might ward information be missing for some voters? What does this tell us about the historical record?
+
+>
+
+(@) Create a cleaned version of BostonWomenVoters that removes any row with missing data in the Ward or Age columns. How many rows are removed?
+```{r}
+```
+
+(@) Sometimes we want to keep rows with missing data but identify them. Can you create a new column called `ward_missing` that is TRUE when Ward is NA and FALSE otherwise?
+```{r}
+
+```
+
+
+### Introduction to Factors
+
+In R, **factors** are used to represent categorical data (like occupation, state, type of location). Under the hood, R stores these as integers with labels, which is efficient for analysis.
+```{r}
+# Check if a column is a factor
+class(gayguides$state)  # Usually character
+
+# Convert to factor
+gayguides %
+  mutate(state_factor = as.factor(state))
+
+# See the levels (categories)
+levels(gayguides$state_factor)
+```
+
+Why use factors?
+- Efficient storage and computation
+- Control order of categories (important for plotting!)
+- Prevent typos (can only use existing levels)
+```{r}
+# Example: order matters for plotting
+data("BostonWomenVoters")
+
+# Default alphabetical order
+BostonWomenVoters %>%
+  count(Occupation) %>%
+  head()
+```
+
+(@) Convert the `type` column in gayguides to a factor. How many different types of locations are there?
+```{r}
+```
+
+(@) In the Boston Women Voters data, convert Occupation to a factor. What are the levels?
+```{r}
+```
+
+**Note:** We'll learn more advanced factor manipulation (reordering, recoding, collapsing) in the next worksheet!

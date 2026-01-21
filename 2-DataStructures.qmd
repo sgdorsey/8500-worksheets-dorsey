@@ -1,0 +1,260 @@
+---
+title: "Worksheet 2: Data Structures"
+author: ""
+date: ""
+---
+
+_This is the second in a series of worksheets for History 8500 at Clemson University. The goal of these worksheets is simple: practice, practice, practice. The worksheet introduces concepts and techniques and includes prompts for you to practice in this interactive document. When you are finished, you should change the author name (above), render your document to a pdf, and upload it to canvas. Don't forget to commit your changes as you go and push to github when you finish the worksheet._
+
+## Subsetting, Loops & Control Structures, and Functions
+
+### Subsetting
+
+Subsetting is the process of retrieving just the parts (a subset) of a large vector, list, or data frame. R has numerous operators for subsetting information or data structures. They allow you to perform complex operations with a small amount of code but can be hard to master because subsetting operators (`[[`, `[`, and `$`) interact differently with different vector types. 
+
+We'll be talking about vectors throughout the first part of this worksheet and it might be useful to refresh our memories about what a vector is. 
+
+> _A vector is a list of variables, and the simplest data structure in R. A vector consists of a collection of numbers, arithmetic expressions, logical values or character strings for example._
+
+#### Selecting Multiple Elements
+
+Lets start by creating a simple vector called x. 
+
+```{r}
+x <- c(15.4, 25, 2, 8.35, 5, 383, 10.2)
+```
+
+If you type `x` into your console, you will see that all of the values are printed out and preceded by a `[1]`. What the `[1]` refers to is that first number, 15.4. Its position in the list is 1. Each number in our list has an index number and that is how you retrieve specific positions in this vector. 
+
+For example, we can use a positive integer to return elements at specific positions. Lets grab the value in the 3rd and 5th position.
+```{r}
+x[c(3,5)]
+```
+We can also use functions to manipulate our vector. Here we use `order()` to print the values contained in the vector in order. 
+```{r}
+x[order(x)]
+```
+
+Duplicate indices will return duplicate values. 
+```{r}
+x[c(3,3)]
+```
+(@) Create your own vector and return three values using the subsetting method above. 
+```{r}
+
+```
+
+
+Negative integers allow us to exclude values at certain positions. 
+```{r}
+x[-c(3, 1)]
+```
+
+(@) What happened here? Describe this in your own words. 
+
+>
+
+You can use either positive or negative integers to subset a vector but you **cannot mix the two**.
+
+We can assign logical values to each value in a vector and use those to subset the data. Logical vectors select elements where the corresponding logical value is `TRUE`. Remember, we created a vector earlier and assigned it to x. Now, below, we assign logical values to each of the values in that vector. We're doing this by hand here, but you can imagine a scenario down the road where you use this technique to apply `TRUE` or `FALSE` values to a huge dataset dependent on some principal. When we run this, only the `TRUE` values are printed out. 
+```{r}
+#create a vector 
+x[c(TRUE, FALSE, TRUE, TRUE, FALSE)]
+```
+
+We can also subset to get values that match a particular criteria. Below, each item in the vector is tested against this proposition and it returns the values that are `TRUE`.
+```{r}
+x[x > 7]
+```
+
+(@) What is going on in each of the lines above? Describe it in your own words. 
+
+>
+
+Nothing returns the original vector. This isn't that useful here but can come in handy when you have more complex structures like matrices and arrays. 
+```{r}
+x[]
+```
+
+If your vector is named, you can also use character vectors to return elements with matching names. 
+```{r}
+(y <- setNames(x, letters[1:4]))
+y[c("d")]
+```
+(@) What happened here? Explain this in your own words. 
+
+#### Matrices
+
+We can subset higher dimensional structures, like matrices, too. First lets define a matrix. In R, **a matrix** is a collection of elements of the same data type (numeric, character, or logical) arranged into a fixed number of rows and columns. Since you are only working with rows and columns, a matrix is called two dimensional. To create a matrix you can use the `matrix()` function.
+```{r}
+matrix(1:9, byrow = TRUE, nrow = 3)
+```
+
+In the `matrix()` function:
+
+  * The first argument is the collection of elements that R will arrange into the rows and columns of the matrix. Here, we use 1:9 which is a shortcut for c(1, 2, 3, 4, 5, 6, 7, 8, 9).
+  * The argument byrow indicates that the matrix is filled by the rows. If we want the matrix to be filled by the columns, we just place byrow = FALSE.
+  * The third argument nrow indicates that the matrix should have three rows.
+
+(@) You try now, create a matrix that had five rows with numbers that range from 25 to 49. 
+```{r}
+
+```
+
+(@) Can you create a matrix that has 3 rows with only even numbers from 2 to 18? 
+```{r}
+
+```
+
+##### Subsetting Matricies 
+
+The most common way to subset matrices and arrays is to use a simple generalization of the same subsetting method we used for vectors above. We can subset by supplying index for each dimension separated by a comma. So it looks like this: 
+```{r}
+a <- matrix(1:9, nrow=3)
+colnames(a) <- c("A", "B", "C")
+a
+```
+Here is our matrix. Its similar to the one we used above except I named each column using the `colnames()` function. 
+
+So to subset this matrix and get just the first two rows I can do: 
+```{r}
+a[1:2,]
+```
+If I want to get the first two columns, I can do: 
+```{r}
+a[,1:2]
+```
+I could also exclude a column: 
+```{r}
+a[,-2]
+```
+Or get just one single value from the matrix: 
+```{r}
+a[2,3]
+```
+These skills are important because dataframes have the characteristics of both lists and matricies. 
+
+So lets load the Gay guides data from our class pacakge. 
+```{r}
+library(DigitalMethodsData)
+data("gayguides")
+```
+
+To subset this data we could pull two particular columns like this: 
+```{r}
+#gayguides[2:3]
+```
+That returns columns 2 and 3 (including every single row!). 
+
+If we use two indices it'll behave more like a matrix. 
+```{r}
+gayguides[1:3,]
+```
+
+(@) Why is this different? What do we get compared to the previous example? 
+
+>
+
+(@) Can you find just the city and state for the first 5 entries? 
+```{r}
+
+```
+
+(@) How about the street address and type for rows 2,555 to 2,560?
+
+```{r}
+
+```
+
+(@) Load another dataset from `DigitalMethodsData`. Subset it to find some element of the data. Write the code below and then explain what element of the data you wanted to subset and why:
+```{r}
+
+```
+
+> 
+
+Another useful operator to know is `$` which we used a little bit in the previous worksheet. `$` is shorthand for accessing a variable in a dataframe. 
+ 
+So for example both of these produce the same result. One is just easier to type. Because the output here is so large, I've commented these two lines out. Uncomment them and the run the block.
+```{r R.options=list(max.print=10)}
+#gayguides["title"]
+#gayguides$title
+```
+
+Notice the above output is _huge_. We can combine `$` and `[` to drill down more specifically like we did earlier.
+```{r}
+gayguides$city[100:110]
+```
+
+(@) What does this code do? 
+
+>
+
+(@) Can you find all the titles of locations in South Carolina? (Hint: You'll need to use both `$` and `[]`)
+```{r}
+
+```
+
+We can also use `$` to create a new column in `gayguides`. 
+```{r}
+gayguides$mynewcolumn <- TRUE
+gayguides$mynewcolumn[1:10]
+```
+What does this code do? It creates a new column in the gayguides data called `mynewcolumn` and it assigns `TRUE` to every row (all 60k). This is a bit of a unrealistic example. You probably won't want to add the same value to 60k+ rows but the concept here is useful and we'll use it in the next worksheet. 
+
+## The Pipe Operator
+
+In class we learned about the pipe operator `%>%`. The pipe takes the output from the left side and passes it as the first argument to the right side. This makes code more readable.
+```{r}
+# These are equivalent:
+head(gayguides, 10)
+gayguides %>% head(10)
+```
+
+(@) Use the pipe to subset the gayguides data to get the title column, then look at the first 20 entries.
+```{r}
+```
+
+## Putting It All Together: Historical Data Challenges
+
+Now that you've learned about subsetting vectors, matrices, and data frames, let's apply these skills to historical datasets. These challenges will require you to combine multiple techniques. These are meant to be challenging, remember the goal is to try not to get each one perfect. Document your struggles and any resources you use in your logs for the week.
+
+### Challenge 1: Temporal Analysis of LGBTQ Spaces
+
+(@) Using the `gayguides` data, find all locations in California during the 1970s (1970-1979). 
+Hint: Break this into steps:
+   - Step 1: Create a logical vector that identifies California locations
+   - Step 2: Create a logical vector that identifies 1970s dates
+   - Step 3: Combine these conditions
+   - Step 4: Use this combined condition to subset the data
+```{r}
+
+```
+
+(@) The `amenityfeatures` column contains codes about each location. Can you find all entries that mention "(G)" for girls/women anywhere in their amenity features during 1975? How many locations specifically catered to women that year?
+```{r}
+# Hint: You'll need to search within the amenityfeatures text
+# The str_detect() function might be useful, or you could use grepl()
+```
+
+### Challenge 2: Boston Women Voters
+
+Load the Boston Women Voters dataset and use subsetting to answer these historical questions:
+```{r}
+
+```
+
+(@) Find all women voters who were over 50 years old. Then find all the voters who were under the age of 50. How many were there? What can you say about the age distribution of women voters?
+```{r}
+```
+
+(@) Can you create a subset that includes only women voters who lived on "Main" street (the street name contains "Main")? How many were there? # Hint: You'll need to search within the street column. This will require a bit of googling and reading documentation. Look for a function that will allow you to search within a column.
+```{r}
+
+```
+
+(@) Using subsetting techniques, can you find the occupations of the five oldest women in the dataset? What were they?
+```{r}
+# Hint: You might need to order the data first, then subset
+# The order() function could be helpful
+```
