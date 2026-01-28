@@ -1,7 +1,7 @@
 ---
 title: 'Worksheet 1: R Basics'
-author: ""
-date: ""
+author: "Sharon Dorsey"
+date: "1.28.26"
 ---
 
 _This is the first in a series of worksheets for History 8500 at Clemson University. The goal of these worksheets is simple: practice, practice, practice. The worksheet introduces concepts and techniques and includes prompts for you to practice in this interactive document. When you are finished, you should change the author name (above), render your document to a pdf, and upload it to canvas. Don't forget to commit your changes as you go and push to github when you finish the worksheet._
@@ -28,9 +28,14 @@ Numbers can be used to do arithmetic.
 ```
 
 (@) You try, multiple two numbers. 
-
+```{r}
+5*5
+```
 
 (@) Can you multiply two numbers and then divide by the result? 
+```{r}
+5*6/2
+```
 
 The next type of value is a **string**. Strings are lines of text. Sometimes these are referred to as character vectors. To create a string, you add text between two quotation marks. For example: 
 ```{r}
@@ -39,7 +44,7 @@ The next type of value is a **string**. Strings are lines of text. Sometimes the
 
 (@) Try to create your own string.
 ```{r}
-
+"This is my string"
 ```
 
 You can't add strings using `+` like you can numbers. But there is a function called `paste()` which concatenates character vectors into one. This function is _very_ useful and one you'll use a lot in a variety of circumstances. Here's what that looks like: 
@@ -50,12 +55,12 @@ paste("Hello", "Clemson Graduate Students")
 
 (@) Try it, add two strings together like the above example. 
 ```{r}
-
+paste("This is my string", "and it is cool.")
 ```
 
 (@) Can you explain what happened in 2-3 sentences? 
 
-> 
+> The two separate strings were combined into one string. This one string is the output of the total command, which shows in the terminal.
 
 The last type are **logical** values like `TRUE` and `FALSE`. (Note that these are all caps.)
 
@@ -95,11 +100,17 @@ Logical Operators allow you to combine or change the results of comparisons.
 ```
 (@) Explain, what does the code on each line above do? 
 
->
+>In 94, the code says that the statement 5=10 is false.
+In 95, the code says that the statement 3<4 is true.
+In 96, the code says 5 is not equal to 10 is a true statement.
+In 97, the code says 5 is not equal to 5 is a false statement.
+98 says that the statement "3 is equal to 4 or 3" is true.
+99 says that the statement "3 is less than 4 and 3 is less than 5" is true.
 
 (@) Create your own comparison. 
 ```{r}
-
+6<100
+5 != 4 | 3 != 5
 ```
 
 (@) Can you write code that checks if a year is between 1970 AND 1980? 
