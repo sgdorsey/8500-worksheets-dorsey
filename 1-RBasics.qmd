@@ -325,7 +325,7 @@ y = 1,
 z = x * 2 + y
 )
 ```
-What is going on here? Each line within this function (x,y,z) creates a new column and determines the values in each row. So the first line creates five rows with values sequentially from 1 to 5. The second column contains only the value 1 in all five rows. 
+What is going on here? Each line within this function (x,y,z) creates a new column and determines the vhalues in each row. So the first line creates five rows with values sequentially from 1 to 5. The second column contains only the value 1 in all five rows. 
 
 (@) What is going on in row z? Can you explain the logic here?
 
@@ -351,7 +351,7 @@ Run `help(package="DigitalMethodsData")` in your console to pull up a list of da
 
 For demonstration purposes we'll use the `gayguides` data here. Pull up the help documentation for this dataset. What does the documentation tell you abou the scope of this dataset? 
 
->
+> This dataset contains 14 variables with 60698 observations (rows). The information included is the addresses in Bob Dameron's address books from 1965-1985.
 
 To use a dataset included in this package we first need to load it. We can do so like this:
 
@@ -373,17 +373,16 @@ That gives us the first 6 rows of data. Its really useful if you just want to pe
 
 (@) The default is to print six rows of data. Can you modify the above code to print out the first 10 rows? 
 ```{r}
-
+head(gayguides, n=10)
 ```
 
 (@) Can you find the last 6 rows of data? 
 ```{r}
-
+tail(gayguides)
 ```
 
 (@) Reflect on the previous two prompts. How did you figure these out? 
-
->
+>I remembered these commands from the Command Line Overview video, so I knew the head and tail commands. I figured if the head command worked in R the tail command would too.? I knew I had to define the number of rows for the command to pull from, but I couldn't figure out where to put the n=10, so I googled that. It does also show in the documentation.
 
 The `str()` function is another very useful function for understanding a dataset. It compactly displays the internal structure of an R object. 
 ```{r}
@@ -402,7 +401,7 @@ gayguides$title[500]
 
 (@) Break this down. Whats going on here? What do each of the elements of this code mean? (gayguides, $, title, and [500]) 
 
->
+>gayguides is the data set that's being looked at. The $ indicates that we're looking at one category or variable, which is the title. Then, the 500 indicates that the only thing that should be in the output is whatever is the title of the 500th place in the list. It continuously narrows the scope of the command to make it more specific.
 
 (@) The Year variable contains the year (numeric) of each entry. Can you find the earliest year in this dataset? (Using code, don't cheat and use the documentation!)
 ```{r}
