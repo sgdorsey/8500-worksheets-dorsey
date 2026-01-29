@@ -236,7 +236,7 @@ my.numbers * 2
 ```
 (@) Explain in a few sentences, what happened in the code above?
 
->
+>The code above took each number in the vector and multiplied it by two. Then it gave the multiplied numbers as the output in the R panel/terminal (I couldn't remember what we called it in class).
 
 Lets try something slightly different. 
 ```{r}
@@ -244,11 +244,12 @@ my.numbers[3] * 2
 ```
 (@) Explain in a few sentences, what happened in the code above? 
 
->
+> The my.numbers[3] isolated the third number in the sequence (6). That number was multiplied by 2.
 
 (@) You try, create a list of five items and store it in a descriptive variable. 
 ```{r}
-
+cities <- c("Spartanburg", "Pelzer", "Greenville", "Pacolet")
+cities
 ```
 
 
