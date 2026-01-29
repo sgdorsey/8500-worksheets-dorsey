@@ -405,24 +405,31 @@ gayguides$title[500]
 
 (@) The Year variable contains the year (numeric) of each entry. Can you find the earliest year in this dataset? (Using code, don't cheat and use the documentation!)
 ```{r}
-
+min(gayguides$Year)
 ```
-
+The earliest year is 1965.
 
 (@) How about the latest year? 
 ```{r}
-
+max(gayguides$Year)
 ```
-
+The latest year is 1985.
 
 (@) Add another dataset from `DigitalMethodsData`. How many observations are included in this dataset? Run through some of the examples from above to learn about the dataset.
 ```{r}
+data(almshouse_admissions)
+head(almshouse_admissions)
+str(almshouse_admissions)
+min(almshouse_admissions$Year.Admitted, na.rm = TRUE)
+max(almshouse_admissions$Year.Admitted)
+max(almshouse_admissions$YearDischarged)
+help(package="DigitalMethodsData")
 
 ```
 
 (@) What did you learn about the dataset? What can you tell me about it? 
 
->
+>This dataset has 9 variables and 1400 observations. The Almshouse Admissions data is a sample of the people who were admitted to the Philadelphia Almshouse between 1796 and 1803. The latest discharge date was in 1813. The latest admission date was in 1805. I could not get a year for the minimum year Admitted, as my command kept giving me 0 for the output. I tried to Google it and I tried adding na.rm = TRUE to remove any missing values. The dataset includes information such as gender, descriptions, the reason for discharge, and the names of the admitted.
 
 
 
