@@ -281,14 +281,17 @@ We can ask R to pull up the documentation like this:
 
 (@) Now you try, find the documentation for the function  `signif()`.
 ```{r}
-
+?signif()
 ```
 
 In real life, you typically you wouldn't want to store this code in your script file. You probably don't need to pull up the documentation for the function every time you run that piece of code. But for the purposes of this worksheet we're adding it to our `.Rmd` document. 
 
 (@) Use the console to find the documentation for `floor()`? Try it and then tell me, what does that function do? 
+```{r}
+?floor()
+```
 
->
+>floor is a rounding function that takes whatever is x and gives you the biggest integer that would not go over the number that was x. For example, if x was 5.1 and you did floor(5.1), the output would be 5. I was able to run the documentation, but I had to google it to understand it. 
 
 ### Data Frames & Packages
 
