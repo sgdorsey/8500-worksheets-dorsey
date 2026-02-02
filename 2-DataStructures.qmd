@@ -1,7 +1,7 @@
 ---
 title: "Worksheet 2: Data Structures"
-author: ""
-date: ""
+author: "Sharon Dorsey"
+date: "2/2/26"
 ---
 
 _This is the second in a series of worksheets for History 8500 at Clemson University. The goal of these worksheets is simple: practice, practice, practice. The worksheet introduces concepts and techniques and includes prompts for you to practice in this interactive document. When you are finished, you should change the author name (above), render your document to a pdf, and upload it to canvas. Don't forget to commit your changes as you go and push to github when you finish the worksheet._
@@ -41,7 +41,8 @@ x[c(3,3)]
 ```
 (@) Create your own vector and return three values using the subsetting method above. 
 ```{r}
-
+y <- c(2,4,6,8)
+y[c(1,2,4)]
 ```
 
 
@@ -52,7 +53,7 @@ x[-c(3, 1)]
 
 (@) What happened here? Describe this in your own words. 
 
->
+>This string printed the values, but it did not print the third and first value.
 
 You can use either positive or negative integers to subset a vector but you **cannot mix the two**.
 
