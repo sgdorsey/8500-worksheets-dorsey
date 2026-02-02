@@ -38,7 +38,7 @@ I was just confused and didn't have the sheet to look at from the other week.
 - [x] Other: [Google search: https://www.r-bloggers.com/2024/01/unveiling-the-earliest-date-a-journey-through-r/#google_vignette]
 
 **Resolution:**
-min(almshouse_admissions$Year.Admitted) - worked, however the output is zero, which doesn't seem consistent with the data description when I look up the documentation. Awaiting slack response.
+min(almshouse_admissions$Year.Admitted) - worked, however the output is zero, which doesn't seem consistent with the data description when I look up the documentation. After posting in Slack, After posting this question in slack, I viewed the data in the environment and sorted the Year.Admitted column in ascending order, which showed that two rows did have 0 as the value in the Year.Admitted column.
 
 **What I learned:**
 It taught me about finding the minimum value, using $, and embracing Googling the question to try and fix it on my own.

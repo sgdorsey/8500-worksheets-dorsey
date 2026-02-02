@@ -429,7 +429,7 @@ help(package="DigitalMethodsData")
 
 (@) What did you learn about the dataset? What can you tell me about it? 
 
->This dataset has 9 variables and 1400 observations. The Almshouse Admissions data is a sample of the people who were admitted to the Philadelphia Almshouse between 1796 and 1803. The latest discharge date was in 1813. The latest admission date was in 1805. I could not get a year for the minimum year Admitted, as my command kept giving me 0 for the output. I tried to Google it and I tried adding na.rm = TRUE to remove any missing values. The dataset includes information such as gender, descriptions, the reason for discharge, and the names of the admitted.
+>This dataset has 9 variables and 1400 observations. The Almshouse Admissions data is a sample of the people who were admitted to the Philadelphia Almshouse between 1796 and 1803. The latest discharge date was in 1813. The latest admission date was in 1805. I could not get a year for the minimum year Admitted, as my command kept giving me 0 for the output. I tried to Google it and I tried adding na.rm = TRUE to remove any missing values. After posting this question in slack, I viewed the data in the environment and sorted the Year.Admitted column in ascending order, which showed that two rows did have 0 as the value in the Year.Admitted column. The dataset includes information such as gender, descriptions, the reason for discharge, and the names of the admitted.
 
 
 
