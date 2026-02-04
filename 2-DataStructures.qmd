@@ -195,8 +195,7 @@ gayguides$city[100:110]
 
 (@) Can you find all the titles of locations in South Carolina? (Hint: You'll need to use both `$` and `[]`)
 ```{r}
-sclocations<- gayguides[gayguides$state == "South Carolina",]
-sclocations$title
+gayguides$title[gayguides$state == "SC"]
 ```
 
 We can also use `$` to create a new column in `gayguides`. 
@@ -217,7 +216,7 @@ gayguides %>% head(10)
 
 (@) Use the pipe to subset the gayguides data to get the title column, then look at the first 20 entries.
 ```{r}
-gayguides$title %>% head(5)
+gayguides$title %>% head(20)
 ```
 
 ## Putting It All Together: Historical Data Challenges
@@ -233,7 +232,10 @@ Hint: Break this into steps:
    - Step 3: Combine these conditions
    - Step 4: Use this combined condition to subset the data
 ```{r}
+CAtitles <- gayguides$title[gayguides$state == "CA"] 
 
+"1970s_entries" <- gayguides$Year >= "1970" & gayguides$Year <= "1979"
+seventiesCAtitles <- c(CAtitles, "1970s_entries")
 ```
 
 (@) The `amenityfeatures` column contains codes about each location. Can you find all entries that mention "(G)" for girls/women anywhere in their amenity features during 1975? How many locations specifically catered to women that year?
