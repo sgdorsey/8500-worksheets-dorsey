@@ -217,6 +217,7 @@ gayguides %>% head(10)
 
 (@) Use the pipe to subset the gayguides data to get the title column, then look at the first 20 entries.
 ```{r}
+gayguides$title %>% head(5)
 ```
 
 ## Putting It All Together: Historical Data Challenges
