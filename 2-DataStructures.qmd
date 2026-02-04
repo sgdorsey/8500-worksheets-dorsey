@@ -70,7 +70,7 @@ x[x > 7]
 
 (@) What is going on in each of the lines above? Describe it in your own words. 
 
->
+>In line 63, each of the numbers in vector x are assigned a true or false value. Running line 63 returns just the values that are true. Line 68 tests each of the entries in the vector x to see if they are above 7, and only returns the ones that are.
 
 Nothing returns the original vector. This isn't that useful here but can come in handy when you have more complex structures like matrices and arrays. 
 ```{r}
@@ -83,6 +83,7 @@ If your vector is named, you can also use character vectors to return elements w
 y[c("d")]
 ```
 (@) What happened here? Explain this in your own words. 
+This set of code told the computer to print the number that was paired with the letter "d," which was 8.35.
 
 #### Matrices
 
