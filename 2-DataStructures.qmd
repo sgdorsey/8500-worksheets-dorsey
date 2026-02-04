@@ -196,6 +196,7 @@ gayguides$city[100:110]
 (@) Can you find all the titles of locations in South Carolina? (Hint: You'll need to use both `$` and `[]`)
 ```{r}
 gayguides$title[gayguides$state == "SC"]
+gayguides[gayguides$state=="SC","title"]
 ```
 
 We can also use `$` to create a new column in `gayguides`. 
@@ -236,13 +237,25 @@ CAtitles <- gayguides$title[gayguides$state == "CA"]
 
 "1970s_entries" <- gayguides$Year >= "1970" & gayguides$Year <= "1979"
 seventiesCAtitles <- c(CAtitles, "1970s_entries")
+'''
+
+
+
+'''{r}
+ca_loc <- gayguides$state == "CA"
+seventies <- gayguides$Year >= "1970" & gayguides$Year <= "1979"
+caliseventies <- ca_loc & seventies
+subset70s <- gayguides[cali_in_seventies,]
 ```
 
 (@) The `amenityfeatures` column contains codes about each location. Can you find all entries that mention "(G)" for girls/women anywhere in their amenity features during 1975? How many locations specifically catered to women that year?
 ```{r}
 # Hint: You'll need to search within the amenityfeatures text
 # The str_detect() function might be useful, or you could use grepl()
+grep("(G)", gayguides$amenityfeatures[gayguides$Year == 1975])
+
 ```
+210 locations.
 
 ### Challenge 2: Boston Women Voters
 
