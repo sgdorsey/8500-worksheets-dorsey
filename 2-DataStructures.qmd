@@ -100,12 +100,12 @@ In the `matrix()` function:
 
 (@) You try now, create a matrix that had five rows with numbers that range from 25 to 49. 
 ```{r}
-
+matrix(25:49, byrow = TRUE, nrow = 5)
 ```
 
 (@) Can you create a matrix that has 3 rows with only even numbers from 2 to 18? 
 ```{r}
-
+matrix(seq(from=2, to=18, by = 2), byrow = TRUE, nrow = 3)
 ```
 
 ##### Subsetting Matricies 
@@ -144,7 +144,7 @@ data("gayguides")
 
 To subset this data we could pull two particular columns like this: 
 ```{r}
-#gayguides[2:3]
+gayguides[2:3]
 ```
 That returns columns 2 and 3 (including every single row!). 
 
@@ -155,11 +155,11 @@ gayguides[1:3,]
 
 (@) Why is this different? What do we get compared to the previous example? 
 
->
+>In the second example, you're going to only get rows one through 3, since there is nothing after the comma. In the first one, the computer is being told to pull everything from columns two through 3.
 
-(@) Can you find just the city and state for the first 5 entries? 
+(@) Can you find just the city and state for the first 5 entries? -city is 9, state is 10
 ```{r}
-
+gayguides[1:5,9:10]
 ```
 
 (@) How about the street address and type for rows 2,555 to 2,560?
