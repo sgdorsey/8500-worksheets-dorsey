@@ -266,15 +266,23 @@ Load the Boston Women Voters dataset and use subsetting to answer these historic
 
 (@) Find all women voters who were over 50 years old. Then find all the voters who were under the age of 50. How many were there? What can you say about the age distribution of women voters?
 ```{r}
+oldvoters<-BostonWomenVoters[BostonWomenVoters$Age >= 50, ]
+youngvoters<-BostonWomenVoters[BostonWomenVoters$Age < 50, ]
 ```
+
+The age distribution of women voters in Boston was skewed toward younger voters, with 8119 of the voters being under 50 years old and only 2658 of the voters being 50 and older.
 
 (@) Can you create a subset that includes only women voters who lived on "Main" street (the street name contains "Main")? How many were there? # Hint: You'll need to search within the street column. This will require a bit of googling and reading documentation. Look for a function that will allow you to search within a column.
 ```{r}
-
+mainst<-BostonWomenVoters[grepl("Main", BostonWomenVoters$Street.of.Residence.on.April.1), ]
 ```
-
+Only 4 women lived on Main st.
 (@) Using subsetting techniques, can you find the occupations of the five oldest women in the dataset? What were they?
 ```{r}
 # Hint: You might need to order the data first, then subset
 # The order() function could be helpful
+order(BostonWomenVoters$Age)
+womenorder<-BostonWomenVoters[order(BostonWomenVoters$Age, decreasing = TRUE), ]
+BostonWomenVoters$Age
+BostonWomenVoters$Occupation
 ```
