@@ -282,7 +282,7 @@ Only 4 women lived on Main st.
 # Hint: You might need to order the data first, then subset
 # The order() function could be helpful
 order(BostonWomenVoters$Age)
-womenorder<-BostonWomenVoters[order(BostonWomenVoters$Age, decreasing = TRUE), ]
-BostonWomenVoters$Age
-BostonWomenVoters$Occupation
+womenorder<-BostonWomenVoters[order(BostonWomenVoters$Age, decreasing = TRUE), ]$Occupation
+head(womenorder)
 ```
+The five oldest womens' occupations are as follows: "At home," "At home," "[home?]," "Housekeeper," and "Widow/nRetired"
