@@ -9,7 +9,7 @@
 ## What I Worked On This Week
 
 **Assignment(s):**
-- [ ] Worksheet [#]
+- [ ] Worksheet [2]
 - [ ] Other: [describe]
 
 ---
@@ -49,18 +49,19 @@ sclocations$title - gave me something but unsure if it's correct
 ### Challenge 2: [Brief descriptive title]
 
 **What I was trying to do:**
-[Describe the task or problem]
-
+On the last question, I kept getting the wrong output.
 **What went wrong:**
-[Describe the error, confusion, or roadblock]
-
+order(BostonWomenVoters$Age)
+womenorder<-BostonWomenVoters[order(BostonWomenVoters$Age, decreasing = TRUE), ]$Occupation
+tail(womenorder)
+I kept running this code and checking it with the view finder, and it wasn't working.
 **My problem-solving process:**
-1. [First attempt - what you did and what happened]
-2. [Second attempt - what you did and what happened]
+1. I ran it a couple of times like this and pulled the documentation on the tail function to see if I wasn't using it right.
+2. I reran the code piece by piece and realized that I had ordered the data from oldest to youngest and then was asking it to give me the last six entries, so effectively asking for the youngest women. I changed the last line to head(womenorder) and that worked.
 3. [Additional attempts if relevant]
 
 **Resources I consulted:**
-- [ ] Documentation for [package/function]
+- [ x] Documentation for [tail]
 - [ ] Stack Overflow: [describe what you searched for]
 - [ ] Course materials: [which ones]
 - [ ] Slack discussion
@@ -68,10 +69,10 @@ sclocations$title - gave me something but unsure if it's correct
 - [ ] Other: [describe]
 
 **Resolution:**
-[What ultimately worked or where you're still stuck]
+Switching the function to head(womenorder) worked.
 
 **What I learned:**
-[What did this teach you about the concept, the tool, or problem-solving?]
+Reading the code line by line and taking my time would be helpful, especially if I'm coming back to it a day later.
 
 ---
 
@@ -107,12 +108,9 @@ sclocations$title - gave me something but unsure if it's correct
 ## Reflection
 
 **What I understand well now:**
-[What clicked for you this week?]
-
+Nothing clicked per se, but I understand how to use the subsetting and order functions and I just need to practice more. 
 **What I'm still confused about:**
-[What remains unclear? What questions do you have?]
-
+How would you subset a matrix when the two columns are nonadjacent?
 **Connection to historical research:**
-[How might this week's skills apply to your research?]
-
+I think subsetting will be incredibly important, especially when I'm comparing denominations of churches, etc.
 
