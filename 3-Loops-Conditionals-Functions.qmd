@@ -186,7 +186,10 @@ The loop only printed 3 and 4 because i<3 told it to skip 1 and 2, and break aft
 
 (@) What if we wanted to loop through the gay guides data? Can you write a loop that iterates through the cities in the Gay Guides data and returns the title of any location in Greenville? 
 ```{r}
-
+for (i in 1:nrow(gayguides)){
+  if(gayguides$city[i] == "Greenville")
+  print(gayguides$title[i])
+}
 ```
 
 (@) The Gay Guides data is quite large (60,000+ entries). Write a loop that searches through the data and finds the first 5 locations in New York City. Your loop should:
