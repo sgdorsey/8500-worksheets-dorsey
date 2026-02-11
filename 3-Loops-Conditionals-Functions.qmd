@@ -382,7 +382,7 @@ bwvoccupations <- function(occupation) {
   }
 }
 
-housewives<-data.frame(rbind.data.frame(bwvoccupations("housewife")))
+housewives<-bwvoccupations("housewife")
 ```
 
 
