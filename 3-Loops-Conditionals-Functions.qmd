@@ -148,7 +148,7 @@ print(gayguides$title[i])
 (@) Can you modify the above loop to only print titles that contain the word "Bar"? (Hint: use grepl() to search for "Bar" in the title)
 ```{r}
 for (i in 1:nrow(gayguides)){
-  if(grepl("Bar", gayguides$title[i])){
+  if(grepl("Bar", gayguides$title[i], ignore.case = TRUE)){
     print(gayguides$title[i])
   }
 }
@@ -209,13 +209,13 @@ for (i in 1:nrow(gayguides)){
 ```{r}
 found_count <- 0
 for (i in 1:nrow(gayguides)){
-  if(gayguides$city[i] == "New York City")
+  if(gayguides$city[i] != "New York City")
+  next
+  print(gayguides$title[i])
   found_count <- found_count + 1
   if (found_count==5){
     print("5 values reached")
     break
-  
-    print(gayguides$title[i])
   }
 }
 ```
@@ -373,16 +373,18 @@ ggsclocations("SC", 1980)
 (@) Use the Boston Women Voters dataset (BostonWomenVoters). Write a function that accepts the name of an occupation. Your function should return new dataframe that includes the records for every voter listed with that occupation.  
 ```{r}
 bwvoccupations <- function(occupation) {
+  housewives<-data.frame()
   for (i in 1:length(BostonWomenVoters$Occupation)){
     if(BostonWomenVoters$Occupation[i]== occupation) {
-      print(BostonWomenVoters[i,])
+      rbind(housewives, BostonWomenVoters[i,])
     } else {
       next
     }
   }
+  return(housewives)
 }
 
-housewives<-bwvoccupations("housewife")
+bwvoccupations("Housewife")
 ```
 
 
