@@ -154,6 +154,14 @@ for (i in 1:nrow(gayguides)){
 }
 ```
 
+```{r}
+for (i in 1:nrow(gayguides)){
+  if(grepl("New York City", gayguides$city[i])){
+    print(gayguides$title[i])
+  }
+}
+```
+
 Sometimes we want our loop to terminate itself early. There are two statements that help us do that: 
 
 * `next` exits the current iteration
@@ -199,7 +207,17 @@ for (i in 1:nrow(gayguides)){
 
 **Hint:** Create a counter to track how many you've found.
 ```{r}
-
+found_count <- 0
+for (i in 1:nrow(gayguides)){
+  if(gayguides$city[i] == "New York City")
+  found_count <- found_count + 1
+  if (found_count==5){
+    print("5 values reached")
+    break
+  
+    print(gayguides$title[i])
+  }
+}
 ```
 
 `while` is another useful tool for writing loops. While will run a loop _while_ a condition is true. Once that condition is not true, it exits. For example: 
@@ -246,7 +264,7 @@ historyStudents <- function(studentname, class) {
 
 (@) Can you run this function? 
 ```{r}
-
+historyStudents("Sharon", 8510)
 ```
 
 
@@ -261,22 +279,33 @@ Let's start with a simpler function to build confidence.
 
 (@) Write a function called `double()` that takes a number and returns that number multiplied by 2.
 ```{r}
+double<- function(number){
+  myvalue <- number * 2
+  print(myvalue)
+}
 ```
 
 (@) Write a function called `greet()` that takes a name and returns "Hello, [name]!" 
 ```{r}
+greet <- function(name) {
+  statement <- paste("Hello ", name, "!")
+  statement
+}
 ```
 
 Now let's try something more complex:
 
 (@) Write a function that takes a string of text and counts the number of characters. The function should return "There are xx characters in that string." 
 ```{r}
-
+characternumber <- function(mystring) {
+statement<- paste("There are", nchar(mystring), "characters in that string", ".")
+print(statement)
+}
 ```
 
 (@) Reflect on the process of building the above function. How did you go about figuring this out? 
 
->
+>I knew that nchar would need to be used at some point, since that function would count the characters in a string. Then I duplicated the setup of the question about creating the greet() function, but I just substituted the nchar for the name.
 
 The body of a functions can use any of the techniques we've learned in this worksheet like loops and if statements. For example: 
 ```{r}
@@ -304,7 +333,7 @@ grade(75)
 GeorgeWashington <- grade(60)
 ```
 
->
+>George Washington's grade's output gets stored in a variable, because if you view GeorgeWashington then you can see the output was "C." There's no command to print(GeorgeWashington), which would give you the grade.
 
 
 Here's a more complex example: 
