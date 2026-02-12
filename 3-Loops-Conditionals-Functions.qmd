@@ -397,18 +397,35 @@ bwv.occupation.result <- bwvoccupations("Housewife")
    - Returns a statement like "There are XX locations in [state]"
 ```{r}
 found_count <- 0
+count_by_state <- function(state){
 
 for (i in 1:nrow(gayguides)){
-  if(gayguides$state [i] == "SC"){
+  if(gayguides$state[i] == state){
   found_count <- found_count + 1
   }
 }
+print(paste("There are", found_count, "locations in", state))
+}
+
+count_by_state("SC")
 ```
 
 (@) Can you modify your function to also accept a year as a second argument? So `count_by_state("SC", 1975)` would count locations in SC in 1975.
 ```{r}
+found_count <- 0
+count_by_state <- function(state, d.year){
+
+for (i in 1:nrow(gayguides)){
+  if(gayguides$state[i] == state && gayguides$Year[i]==d.year){
+  found_count <- found_count + 1
+  }
+}
+print(paste("There are", found_count, "locations in", state, "for the year", d.year))
+}
+
+count_by_state("SC", 1975)
 ```
 
 (@) Reflection: How do loops, conditionals, and functions work together? Give an example from this worksheet where you used all three.
 
->
+>Loops and conditionals can all be part of functions. For example, in the last question, I created a function where each line of the function was tested to see if it met the condition of being in South Carolina in 1975. This function looped through all the entries of the data in the dataset.
