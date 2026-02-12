@@ -373,18 +373,18 @@ ggsclocations("SC", 1980)
 (@) Use the Boston Women Voters dataset (BostonWomenVoters). Write a function that accepts the name of an occupation. Your function should return new dataframe that includes the records for every voter listed with that occupation.  
 ```{r}
 bwvoccupations <- function(occupation) {
-  housewives<-data.frame()
+  result <-data.frame()
   for (i in 1:length(BostonWomenVoters$Occupation)){
     if(BostonWomenVoters$Occupation[i]== occupation) {
-      rbind(housewives, BostonWomenVoters[i,])
-    } else {
-      next
+      result <- rbind(result, BostonWomenVoters[i,])
     }
   }
-  return(housewives)
+  return(result)
 }
 
 bwvoccupations("Housewife")
+
+bwv.occupation.result <- bwvoccupations("Housewife")
 ```
 
 
@@ -396,7 +396,13 @@ bwvoccupations("Housewife")
    - Counts how many locations are in that state
    - Returns a statement like "There are XX locations in [state]"
 ```{r}
+found_count <- 0
 
+for (i in 1:nrow(gayguides)){
+  if(gayguides$state [i] == "SC"){
+  found_count <- found_count + 1
+  }
+}
 ```
 
 (@) Can you modify your function to also accept a year as a second argument? So `count_by_state("SC", 1975)` would count locations in SC in 1975.
