@@ -37,7 +37,7 @@ I could not figure out where I needed to put "next" in a way that would be usefu
 - [x] Other: [Google - I tried to google about the next function and using next in a loop to filter through data.]
 
 **Resolution:**
-As of 2/11 - I'm stuck.
+Slack discussion resolved it.
 
 
 **What I learned:**
@@ -106,12 +106,11 @@ As of 2/11 - I'm stuck.
 ## Reflection
 
 **What I understand well now:**
-[What clicked for you this week?]
+Nothing clicked, but I understand it.
 
 **What I'm still confused about:**
-[What remains unclear? What questions do you have?]
+Sometimes I cannot figure out the minute details of the syntax.
 
 **Connection to historical research:**
-[How might this week's skills apply to your research?]
-
+I could see the functions to loop through data being super helpful, especially when changing lots of images to PDF, etc.
 
