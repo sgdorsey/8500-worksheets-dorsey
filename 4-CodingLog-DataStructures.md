@@ -49,8 +49,7 @@ Sometimes, taking the code outside of the context of the worksheet can be helpfu
 The task was to find all the entries in the gayguides data that had "(G)" or "(L)" in the amenity features.
 
 **What went wrong:**
-[Describe the error, confusion, or roadblock]
-
+I originally could get it to filter to columns with a single amenity that matched the criteria, but couldn't get the filter to include entries with multiple amenity features.
 **My problem-solving process:**
 1. lesbians <- gayguides %>% filter(amenityfeatures == "(G)" | amenityfeatures == "(L)") - I realized this only gave me the titles with only (G) or (L), but didn't deal with the entries that had other amenities as well.
 2. grep("(G)", gayguides$amenityfeatures) & grep("(L)", gayguides$amenityfeatures) - "In grep("(G)", gayguides$amenityfeatures) & grep("(L)", gayguides$amenityfeatures) :
