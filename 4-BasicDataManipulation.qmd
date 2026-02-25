@@ -147,15 +147,23 @@ gayguides %>%
 
 (@) Many city names in the gayguides data have inconsistent capitalization. Can you create a new column that standardizes all city names to title case using `str_to_title()`?
 ```{r}
+gayguides %>%
+  mutate(city_title = str_to_title(city)) %>%
+  select(city, city_title) %>%
+  head()
 ```
 
 (@) The `amenityfeatures` column contains codes for different features of each location. These are abbreviations in parentheses like (D) for dancing, (E) for entertainment, (G) for girls/women, etc. Can you create a new column called `has_dancing` that is TRUE if the amenity features include "(D)"? (Hint: Use `grepl()` to search for "(D)" within the amenityfeatures column.
 ```{r}
-
+gayguides <- gayguides %>%
+  mutate(has_dancing = grepl("(D)", gayguides$amenityfeatures))
 ```
+
 
 (@) In the Boston Women Voters data, occupation names may have extra whitespace. Use `str_trim()` to clean the occupation column.
 ```{r}
+BostonWomenVoters %>% 
+  mutate(Occupation, str_trim(BostonWomenVoters$Occupation, side = "both"))
 ```
 
 ### Arrange
@@ -174,7 +182,9 @@ gayguides %>%
 
 (@) Using the `statepopulation` data, which state has the largest population in 1850? Write code that pulls only the relevant columns (state and 1850) and sorts it accordingly. 
 ```{r}
-
+statepopulations %>%
+  select(STATE,"X1850") %>%
+  arrange(desc(X1850))
 ```
 
 
@@ -213,6 +223,9 @@ BostonWomenVoters %>%
 
 (@) How many rows in the BostonWomenVoters dataset have missing ward information? 
 ```{r}
+BostonWomenVoters %>% 
+  drop_na(Ward) %>%
+  nrow()
 ```
 
 (@) Why might ward information be missing for some voters? What does this tell us about the historical record?
