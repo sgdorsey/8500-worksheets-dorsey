@@ -74,3 +74,14 @@ s.gayguides <- gayguides %>% group_by(state) %>% summarize(count = n()) %>% arra
 rec_data <- rec_data %>% mutate(spending_per_capita = floor(total_expenditures/population)) %>% arrange(desc(spending_per_capita))
 bigpopulation <- rec_data %>% filter(population > 50000 & total_expenditures>25000) 
 
+#argument: city
+#filters gayguides to show only those cities
+
+gayguides %>% 
+  filter(city == "Atlanta")
+
+
+cityfind <- function(d.city) {
+  gayguides %>% filter(d.city == city) %>% summarize(numofloc = n())
+}
+Atlantalocations <- cityfind("Atlanta")
