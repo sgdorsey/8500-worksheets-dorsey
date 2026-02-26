@@ -233,17 +233,18 @@ sum(is.na(BostonWomenVoters$Ward))
 
 (@) Create a cleaned version of BostonWomenVoters that removes any row with missing data in the Ward or Age columns. How many rows are removed?
 ```{r}
-sum(is.na(BostonWomenVoters$Ward))
-sum(is.na(BostonWomenVoters$Age))
+(sum(is.na(BostonWomenVoters$Ward))) + (sum(is.na(BostonWomenVoters$Age)))
 BostonWomenVoters %>% 
   drop_na(Ward, Age) %>%
   nrow()
 ```
 
+117 rows are removed.
+
 (@) Sometimes we want to keep rows with missing data but identify them. Can you create a new column called `ward_missing` that is TRUE when Ward is NA and FALSE otherwise?
 ```{r}
-BostonWomenVoters %>%
-  mutate(ward_missing = )
+BostonWomenVoters <- BostonWomenVoters %>%
+  mutate(ward_missing = is.na(BostonWomenVoters$Ward))
 ```
 
 
@@ -278,10 +279,27 @@ BostonWomenVoters %>%
 
 (@) Convert the `type` column in gayguides to a factor. How many different types of locations are there?
 ```{r}
+class(gayguides$type)
+
+gg <- gayguides %>%
+  mutate(type_factor = as.factor(type))
+
+levels(gg$type_factor)
+
 ```
+
+There are 235 different types in the Gay Guides dataset.
 
 (@) In the Boston Women Voters data, convert Occupation to a factor. What are the levels?
 ```{r}
+class(BostonWomenVoters$Occupation)
+
+bwv <- BostonWomenVoters %>%
+  mutate(occ_factor = as.factor(Occupation))
+
+levels(bwv$occ_factor)
 ```
+
+There are 1137 levels in the BostonWomenVoters dataset.
 
 **Note:** We'll learn more advanced factor manipulation (reordering, recoding, collapsing) in the next worksheet!

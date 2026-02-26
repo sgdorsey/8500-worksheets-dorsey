@@ -106,12 +106,10 @@ I got the syntax right, but I needed to refresh myself on grepl.
 ## Reflection
 
 **What I understand well now:**
-[What clicked for you this week?]
+I am really liking the tidyverse. 
 
 **What I'm still confused about:**
-[What remains unclear? What questions do you have?]
-
+I don't think I really understand factors still, and I'd like to go over them more. I don't understand why we save it to a separate variable.
 **Connection to historical research:**
-[How might this week's skills apply to your research?]
-
+I think I will use this considerably in historical research. It's much easier than using Excel to filter out everything I need to actually be able to make conclusions.
 
