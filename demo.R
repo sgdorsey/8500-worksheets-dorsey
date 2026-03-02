@@ -85,3 +85,18 @@ cityfind <- function(d.city) {
   gayguides %>% filter(d.city == city) %>% summarize(numofloc = n())
 }
 Atlantalocations <- cityfind("Atlanta")
+
+
+#March 2 2026
+library(tidyverse)
+library(DigitalMethodsData)
+library(forcats)
+data(BostonWomenVoters)
+
+test <- BostonWomenVoters %>% mutate(occupation_lumped = fct_lump(Occupation, n=5))
+domesticwork <- BostonWomenVoters %>% mutate(occupationgroup = fct_collapse(Occupation, "Domestic Work" = c("Housewife", "At Home")))
+slave.state.status <- slave.state.status %>% mutate(State = paste(state))
+statetype <- left_join(fugitive.slave.data, slave.state.status, by = "State")
+typegroup <- statetype %>% group_by(status) %>% summarize(count = n())
+
+statetype <- statetype %>% mutate(location = paste(City,state,sep = ", "))
