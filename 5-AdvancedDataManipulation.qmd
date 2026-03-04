@@ -223,12 +223,12 @@ levels(BostonWomenVoters$Occupation)
 ```
 
 (@) How many different occupations are there?
-
+1137.
 >
 
 (@) Look at the levels. Do you notice any that could be combined or standardized? List a few examples.
 
->
+>Waitress, widow (though that is often combined with something), unemployed, tutor, trained nurse.
 
 ### `fct_count()` - Counting Factor Levels
 
@@ -242,7 +242,7 @@ BostonWomenVoters %>%
 
 (@) What are the three most common occupations?
 
->
+>"Housewife," "At home," and "Housekeeper" are the three most common occupations.
 
 ### `fct_lump()` - Combining Small Categories
 
@@ -258,8 +258,12 @@ This kept the 5 most common occupations and combined everything else into "Other
 
 (@) Use `fct_lump()` to keep the top 10 occupations. How many voters are in the "Other" category?
 ```{r}
+BostonWomenVoters %>%
+  mutate(occupation_lumpedten = fct_lump(Occupation, n=10)) %>%
+  count(occupation_lumpedten) %>%
+  arrange(desc(n))
 ```
-
+There are 4759 voters in the Other category.
 ### `fct_reorder()` - Reordering by Another Variable
 
 By default, factors are ordered alphabetically. But often you want them ordered by frequency or some other value. This is especially useful for plotting which we will get to in the next worksheet.
@@ -284,7 +288,17 @@ BostonWomenVoters %>%
 
 (@) Which occupations have the youngest average age? Which have the oldest? What might this tell us historically?
 
->
+> The occupations with more than 20 people with the youngest average age were students, telephone operators, and school teachers. The oldest average age was found in people with no occupation, housekeepers, and "matron." Usually, it seems that the older women who were not working outside of the home or at all were voting, while younger women who worked outside of the home or were students were voting. It could give us insights into the classes of women who were voting, and it could also lead us to look further into the students to see if they were in womens' rights groups at school or if they may have had a teacher that was prominent in the women's rights movement.
+
+```{r}
+BostonWomenVoters %>%
+  group_by(Occupation) %>%
+  summarize(avg_age = mean(Age, na.rm = TRUE),
+            count = n()) %>%
+  filter(count > 20) %>%
+  mutate(Occupation = fct_reorder(Occupation, avg_age)) %>%
+  arrange(desc(avg_age))
+```
 
 ### `fct_recode()` - Renaming Factor Levels
 
@@ -304,6 +318,18 @@ BWV.occupations <- BostonWomenVoters %>%
 
 (@) Look at the occupation levels. Find at least 3 more occupations that could be recoded to be more standardized or descriptive. Create a new column with your recoded occupations.
 ```{r}
+BWV.occupations <- BostonWomenVoters %>%
+    mutate(
+      Occupation_clean = fct_recode(Occupation,
+        "Waitres" = "Waitress",
+        "waitress" = "Waitress",
+        "Waitress " = "Waitress",
+        "unemployed" = "Unemployed",
+        "typist" = "Typist",
+      )
+    ) %>%
+    count(Occupation_clean) %>%
+    arrange(desc(n))
 ```
 
 ### `fct_collapse()` - Combining Multiple Levels into Categories
@@ -327,10 +353,22 @@ Note that this dataset is still really long. We'd have to add all the categories
 
 (@) Create your own categorization scheme for occupations. Combine related occupations into 5-7 broader categories that make historical sense. Consider categories like professional, domestic, skilled labor, etc. Explain your reasoning.
 ```{r}
+test <- BostonWomenVoters %>%
+  mutate(
+    occupation_category = fct_collapse(Occupation,
+    "Domestic.labor" = c("housewife", "Housewife", "At home", "At Home", "Housekeeper", "House keeper"),
+    "Service" = c("waitress", "cashier", "laundress", "hairdresser", "Tailoress", "Janitress", "Manicurist"),
+    "Technical" = c("operator", "telephone operator", "Tel. Operator"),
+    "Financial" = c("Insurance", "Ledger clerk", "Accountant", "Billing clerk", "Bank Clerk", "saleswoman", "Book Keeper", "bookkeeper"),
+    "Arts" = c("Artist", "Artist, single", "Pianist", "Actress", "musician", "Vaudeville")
+    )
+  ) %>%
+  count(occupation_category) %>%
+  arrange(desc(n))
 ```
 
 > Explain your reasoning. 
-
+Domestic labor would include everyone who is a housewife or works strictly in the home. The "service" category includes people who perform service jobs but may be outside of the home. Technical jobs were those that required knowledge of the technology of the time, particularly surrounding the telephone. Financial jobs included anyone who worked in financial sectors, which would have required some training and a good grasp of math, which in theory would have required schooling. Arts jobs were any that were in an artistic field. I thought it would be interesting historically to see it the arts had more women who were voting than housewives, for example.
 ### `fct_relevel()` - Manual Reordering
 
 Sometimes you want a specific order that isn't alphabetical or by frequency. For example, you might want to order occupations by social/economic status to show income levels on a graph:
@@ -354,9 +392,21 @@ Now when you use this factor in a plot or table, it will appear in this conceptu
 
 (@) Create occupation categories and relevel them in an order that makes sense historically. Explain why you chose this order.
 ```{r}
+BostonWomenVoters %>%
+  mutate(
+    occupation_category = fct_collapse(Occupation,
+    "White Collar" = c("college executive", "Consulting Actuary", "Dentist", "Dep Collection U.S. Internal Revenue", "Dietitian"),
+    "Pink Collar" = c("Teacher", "hairdresser", "clerk","cook", "laundress", "Manicurist"),
+    "Blue Collar" = c("Forelady", "forewoman", "Lamp Inspector", "Factory work", "Factory Work"),
+    ),
+    occupation_category = fct_relevel(occupation_category,
+                                    "White Collar", "Pink Collar", "Blue Collar")
+  ) %>%
+  pull(occupation_category) %>%
+  levels
 ```
 
-> Explanation:
+> Explanation: I chose this order because if everything was assigned the correct category, I think it would be interesting to lay the 60s-70s divisions of what kinds of labor there are over the occupations women voters were holding in the 1920s. I think it would be interesting to see if most of the voters were of a certain type of work.
 
 
 ## Working with Dates using `lubridate`
