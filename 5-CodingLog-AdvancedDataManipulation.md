@@ -43,32 +43,29 @@ Moving the filter around worked.
 I need to use grepl prior to changing anything major with the dataframe itself, I think. If not, the computer gets confused on the column names, possibly.
 ---
 
-### Challenge 2: [Brief descriptive title]
+### Challenge 2: LGBTQ life growth
 
 **What I was trying to do:**
-[Describe the task or problem]
-
+The task was to create a data frame that computes the growth in LGBTQ life in every state from 1970 to 1980
 **What went wrong:**
-[Describe the error, confusion, or roadblock]
-
+I did not know how to make a new column that also computed the difference.
 **My problem-solving process:**
-1. [First attempt - what you did and what happened]
-2. [Second attempt - what you did and what happened]
-3. [Additional attempts if relevant]
+1. I filtered the data to any year between 1970-1980, then realized I actually only needed the numbers for 1980 and 1970.
+2. I filtered the data to 1970 and 1980, then grouped it by state and year, then summarized the totals. After this, I knew I needed to calculate the difference somewhere, but I wasn't sure where.
+3. I searched online and tried the lag() command, which appears to have worked.
 
 **Resources I consulted:**
-- [ ] Documentation for [package/function]
-- [ ] Stack Overflow: [describe what you searched for]
+- [x] Documentation for [lag()]
+- [x] Stack Overflow/Google: "how to find the difference between values associated with years in r"
 - [ ] Course materials: [which ones]
 - [ ] Slack discussion
 - [ ] Office hours
 - [ ] Other: [describe]
 
 **Resolution:**
-[What ultimately worked or where you're still stuck]
-
+Using mutate to create a new column where the difference was computed with lag() worked. Still confused on the regions portion of the question but that's because I don't think I did something correctly earlier.
 **What I learned:**
-[What did this teach you about the concept, the tool, or problem-solving?]
+I learned how to use lag().
 
 ---
 
