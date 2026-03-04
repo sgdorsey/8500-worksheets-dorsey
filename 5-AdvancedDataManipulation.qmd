@@ -61,29 +61,50 @@ BostonWomenVoters %>%
 
 (@) You try, use group_by and summarize to find the total number of locations in each state, each year.
 ```{r}
-
+locationtotals <- gayguides %>%
+  group_by(state,Year) %>%
+  summarize(numloc = n())
 ```
 
 (@) Summarize can do more than just count rows. Can you use `summarize()` to find the average age for each occupation in the Boston Women Voters data?
 ```{r}
-
+avgagebyoccupation <- BostonWomenVoters %>%
+  group_by(Occupation) %>%
+  summarize(
+    avgage = mean(Age, na.rm = TRUE),
+    )
 ```
 
 (@) In the `gayguides` data, on average how many locations did each city in South Carolina have between 1970 and 1975?
 ```{r}
-
+avgsc <- gayguides %>%
+  filter(state == "SC" & Year>="1970" & Year<="1975") %>%
+  group_by(city) %>%
+  summarize(
+    avgnumber = mean(n(), na.rm = TRUE)
+  )
 ```
 
 (@) Can you group the gayguides data by state AND type, then count how many of each type of location exists in each state? Which state has the most bars?
 ```{r}
+locgroup <- gayguides %>%
+  filter(grepl("Bar", gayguides$type)) %>%
+  group_by(type,state) %>%
+  summarize(number = n()) %>%
+  arrange((desc(number)))
 ```
+California has the most bars, with 5490 entries.
 
 (@) Filter the dataset for only the values in the southernstates list (created in the block below). Then tell me, how many locations were in all the southern states in 1975?
 ```{r}
 southernstates <- c("AL", "AR", "FL", "GA", "KY", "LA", "MD", "MS", "NC", "SC", "TN", "TX", "VI", "WV")
-
+southstates <- gayguides %>%
+  filter(state %in% southernstates) %>%
+  group_by(Year) %>%
+  summarize(count=n()) %>%
+  filter(Year == "1975")
 ```
-
+There were 663 locations in all the southern states in 1975.
 
 ## Re-Shaping Data: Joins and Pivots
 
