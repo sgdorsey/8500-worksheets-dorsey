@@ -562,11 +562,18 @@ year_month <- ymd(paste0("1920-06", "-01"))
 
 (@) Some historical records might only have a year. Create a function that takes a year and returns a date object for January 1st of that year. Test it with several years.
 ```{r}
+fillyear <- function(year){
+  statement <- ymd(paste0(year, "-01-01"))
+  statement
+}
+fillyear(1920)
+fillyear(1934)
+fillyear(1936)
 ```
 
 (@) Reflect: What challenges might you encounter when working with dates in historical sources? How might `lubridate` help address some of these challenges?
 
->
+> Sometimes dates aren't standardized, especially if different people record the dates differently. For example, in my data for church archives, one surveyor recorded dates as 05-12-36 and another recorded dates as 1936-05-12. Lubridate can help standardize these issues. In some cases, people may not have recorded all parts of data (some of my data only has the year, while others have months and years of churches being organized), which can be fixed by using lubridate in a function to add months and dates, if they aren't particularly important, so your data can be standardized.
 
 ## Putting it all together
 Each of the functions covered in this worksheet and in last week's worksheet are valuable tools for manipulating datasets. But they are more powerful when combined. When using them to pair down a dataset, we are asking and answering a question. For example in this code from earlier in our worksheet:
