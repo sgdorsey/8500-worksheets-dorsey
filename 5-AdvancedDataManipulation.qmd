@@ -479,8 +479,14 @@ month(dates, label = TRUE)  # Get month names
 wday(dates, label = TRUE)   # Get day of week
 ```
 
-(@) Using the dates you created above for `gayguides`, extract the decade from the date. Compare it to using `floor(Year / 10) * 10` directly on the Year column. Do you get the same result?
+(@) Using the dates you created above for `gayguides`, extract the decade from the date. Compare it to using `floor(Year / 10) * 10` directly on the Year column. Do you get the same result? - Yes
 ```{r}
+gayguides <- gayguides %>%
+  mutate(year = year(gayguides$Date),
+        decade = (year %/% 10) * 10)
+
+gayguides <- gayguides %>%
+  mutate(yrfloor = floor(Year / 10) * 10)
 ```
 
 ### Date Arithmetic
@@ -501,6 +507,9 @@ start_date + months(6)   # 6 months later
 
 (@) The Boston Women Voters data was collected in 1920. Each person has an age. Calculate each person's approximate birth year using `1920 - Age`. Then create a proper birth date assuming they were born on July 1st of that year.
 ```{r}
+BostonWomenVoters <- BostonWomenVoters %>%
+  mutate (birthyear = 1920 - Age) %>%
+  mutate(Date = ymd(paste(BostonWomenVoters$birthyear, "07", "01", sep = "-")))
 ```
 
 ### Working with Intervals
@@ -519,7 +528,24 @@ ymd("1935-06-15") %within% prohibition  # FALSE
 
 (@) Create intervals for different decades (1960s, 1970s, 1980s). For each entry in `gayguides`, determine which decade interval it falls into.
 ```{r}
+sixties <- interval(ymd("1960-01-01"), ymd("1969-12-31"))
+seventies <- interval(ymd("1970-01-01"), ymd("1979-12-31"))
+eighties <- interval(ymd("1980-01-01"), ymd("1989-12-31"))
+
+for (i in 1:nrow(gayguides)) {
+   if (ymd(gayguides$Date[i]) %within% sixties) {
+      print("sixties")
+   } else if (ymd(gayguides$Date[i]) %within% seventies) {
+      print("seventies")
+   } else if (ymd(gayguides$Date[i]) %within%eighties) {
+      print("eighties")
+   } else {
+      print("n/a")
+   }
+}
 ```
+Dr. Regan, please read this: I tried to save this to a variable and it wouldn't save to the variable, then it kept running this for a solid 2 minutes, so I left it alone after this. Can we please go over this in class?
+
 
 ### Handling Historical Dates
 
