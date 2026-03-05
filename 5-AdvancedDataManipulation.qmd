@@ -131,12 +131,14 @@ head(almshouse_admissions)
 ```{r}
 regions <- read.csv("https://raw.githubusercontent.com/regan008/DigitalMethodsData/main/raw/censusregions.csv")
 gayguides <- gayguides %>% mutate(State=paste(state))
-gayguides <- left_join(gayguides, regions, by="State")
-regionsgroup <- gayguides %>% group_by(Region) %>% summarize(numberregion = n())
+gayguides <- left_join(gayguides, regions, by=c("State" = "State.Code"))
+regionsgroup <- gayguides %>% group_by(Division.y) %>% summarize(numberregion = n())
 ```
+There are 3607 locations in the mountain region.
+
 
 (@) Explain what you did above. What variable did you join by and why? What results?
-
+I joined the state column in the gayguides data with the state.code column in regions since both of them have an abbreviated state name ("SC"). That added the region, division, and a duplicate of the state name to the original gayguides dataset.
 
 
 (@)How much did LGTBQ life grow between 1970 and 1980? Can you create a data frame that computes the growth in the number of locations between 1970 and 1980 for every state? For every region? 
@@ -144,6 +146,13 @@ regionsgroup <- gayguides %>% group_by(Region) %>% summarize(numberregion = n())
 yeargrowth <- gayguides %>%
   filter(Year=="1980" | Year=="1970") %>%
   group_by(state,Year) %>%
+  summarize(count=n()) %>%
+  mutate(Previous_Value = lag(count), count-Previous_Value)
+```
+```{r}
+regiongrowth <- gayguides %>%
+  filter(Year=="1980" | Year=="1970") %>%
+  group_by(Region.y,Year) %>%
   summarize(count=n()) %>%
   mutate(Previous_Value = lag(count), count-Previous_Value)
 ```
@@ -224,7 +233,7 @@ levels(BostonWomenVoters$Occupation)
 
 (@) How many different occupations are there?
 1137.
->
+>1137
 
 (@) Look at the levels. Do you notice any that could be combined or standardized? List a few examples.
 
@@ -433,6 +442,9 @@ These all create "Date" objects that R knows how to work with.
 
 (@) Create a vector of dates in different formats and parse them using the appropriate lubridate functions.
 ```{r}
+mdy("12/08/2001")
+dmy("12-08-2001")
+ymd("2001-12-08")
 ```
 
 ### Creating Date Columns
@@ -450,6 +462,8 @@ events %>%
 
 (@) The `gayguides` data has a Year column but no full dates. Create a date column assuming all entries are from January 1st of that year. (Hint: use `paste()` to create a string like "1970-01-01", then parse it)
 ```{r}
+gayguides <- gayguides %>%
+  mutate(Date = ymd(paste(gayguides$Year, "01", "01", sep = "-")))
 ```
 
 ### Extracting Components from Dates

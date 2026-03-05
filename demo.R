@@ -100,3 +100,21 @@ statetype <- left_join(fugitive.slave.data, slave.state.status, by = "State")
 typegroup <- statetype %>% group_by(status) %>% summarize(count = n())
 
 statetype <- statetype %>% mutate(location = paste(City,state,sep = ", "))
+
+#March 4 26
+#start with dataset you want the rows moved into
+demo <- guinness_belfast_sales %>% left_join(guinness_belfast_accounts, by= c("account_id" = "account.id"))
+#if the account id columns were the same, you just put the column. If not, you have to tell it which one is equal
+
+#Pivot wider and longer
+library(tidyr)
+sc.parks <- read.csv("https://raw.githubusercontent.com/regan008/DigitalMethodsData/main/raw/RecreationData-Wide.csv")
+head(sc.parks)
+#tidy dataframes are long
+# the ! is what you don't want it to mess with.
+sc.parks <- sc.parks %>%
+  pivot_longer(!city:type_of_worker, names_to = "year", values_to = "count")
+# this takes the columns and turns them into rows (it should add rows)
+sc.parks <- sc.parks %>%
+  pivot_wider(names_from = year, values_from = count)
+#for pivot wider, you don't have to tell it what you don't want
