@@ -101,12 +101,11 @@ I learned how to use lag().
 ## Reflection
 
 **What I understand well now:**
-[What clicked for you this week?]
+I'm getting a lot better at using the tidyverse and I'm more confident with larger and longer codes.
 
 **What I'm still confused about:**
-[What remains unclear? What questions do you have?]
+Nothing is necessarily unclear, but I do think the for/if/else loop I wrote in the question about intervals was trying to break my computer.
 
 **Connection to historical research:**
-[How might this week's skills apply to your research?]
-
+I will definitely use the tidyverse commands to clean up data that might be messy by fixing dates or standardizing entries (I could see this being particularly useful when I am dealing with multiple denominations that are not always recorded the same way). Being able to put churches into groups (liturgical churches, non-liturgical churches, Pentecostal churches, etc.) would also be helpful and could be accomplished efficiently through the tidyverse commands of fct_collapse and lump.
 
