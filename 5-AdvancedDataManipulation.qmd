@@ -446,6 +446,7 @@ mdy("12/08/2001")
 dmy("12-08-2001")
 ymd("2001-12-08")
 
+#updated from class March 9
 dates_demo <- c("12/08/2001", "05/15/1983")
 parsed_dates <- mdy(dates_demo)
 ```
