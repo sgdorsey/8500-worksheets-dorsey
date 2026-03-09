@@ -587,27 +587,42 @@ The implicit question was, "How many locations appear in each year?". The `judge
 
 (@) First, tell me, what is the question you are asking? 
 ```{r}
-
+How many judges were appointed from South Carolina and which party was the president appointing them from?
 ```
 
 (@) Now write some code to address that question. Comment the code with notes that explain your thinking as you go. Use functions like select(), filter(), etc to pair down your dataset and reshape it to address your question. 
 ```{r}
-
+scjudges <- judges %>%
+  filter(Birth.State == "SC") %>%
+  group_by(Party.of.Appointing.President..1.) %>%
+  summarize(count=n())
 ```
 
 (@) Now ask a question of the `gayguides` data (or another dataset of your choice). What is the question you are asking? 
 ```{r}
-
+What types of locations were in the address books during what years in SC?
 ```
 
 (@) Now write some code to address that question. Comment the code with notes that explain your thinking as you go. Use functions like select(), filter(), etc to pair down your dataset and reshape it to address your question. 
 ```{r}
-
+sctypes <- gayguides %>%
+#filtered by state to pull everything from SC
+  filter(state == "SC") %>%
+  #grouped by type and year to see if the numbers change over time
+  group_by(type, Year) %>%
+  #summarized the count of the group_by output to see if the numbers changed.
+  summarize(count = n())
 ```
 
 (@) Write a function that filters the gay guides dataset. It should accept 2 arguments: year and state. When passed to the function the function should return only the title, type, state and year for each entry. 
 ```{r}
+fourreturn <- function(d.Year, d.state){
+  gayguides %>%
+  filter(Year == d.Year & state == d.state) %>%
+  select(title, type, state, Year)
+}
 
+fourreturn("1975", "SC")
 ```
 
 (@) Lets try another, using the BostonWomenVoters data, answer this question: "How did the age distribution of women in different occupational categories vary across wards?"
@@ -619,10 +634,36 @@ Your analysis should:
 - Calculate average age, minimum age, and maximum age for each group
 - Arrange the results in a meaningful way
 ```{r}
+bwvclean <- BostonWomenVoters %>%
+  drop_na(Ward, Age) %>%
+  mutate(
+    occupation_category = fct_collapse(Occupation,
+    "White Collar" = c("college executive", "Consulting Actuary", "Dentist", "Dep Collection U.S. Internal Revenue", "Dietitian", "Accountant", "Auditor", "Bookkeeper", "Bookkeeper, Self Employed", "Book-keeper", "Dentist's Assistant", "Editor", "Electrologist", "Inspector", "Lawyer", "Manuscript Reader", "Map Corrector"),
+    "Pink Collar" = c("[Assistant] Housekeeper", "Teacher", "hairdresser", "clerk","cook", "laundress", "Manicurist", "Teacher", "Luncheonette", "Kitchen [woman]", "Instructor", "Hatter", "Dressmaker", "Dress Maker", "Dipper", "Decorator", "City Missionary", "Church Works", "Chocolate Dipper", "Candy worker", "Candy Dipper", "Stenographer", "Tailoress", "Typist", "Waitress", "Nurse", "nurse", "Trained Nurse", "trained nurse", "Lodging house-keeper", "Lodging house keeper", "Lodging House", "Lodging house", "librarian", "Librarian", "Coffee maker", "Clerical Work", "Clerk", "Clerk - office work", "Chambermaid", "cashier", "Cashier", "Carpet-sweeper", "Assistant", "Bank clerk", "Bank Clerk", "Office cleaning", "steno", "Sten.", "Bank Teller", "bank teller", "Bank teller", "Clerk & Cashier", "Clerk, Not employed", "Cost Clerk", "File Clerk", "Invoice Clerk", "Janitress", "Laundress", "Music Teacher", "Pastry Cook", "Physical Instructor", "Private Secretary", "Sales-clerk", "Saleslady", "School Teacher", "Seamstress", "Secretary", "Secretary, Not employed", "secretary", "Stenographer", "Stenographer, Not employed", "Stock Clerk", "Storekeeper", "Chamber maid, married", "Counting clerk", "[Lodging House]", "[Secretary]", "[Taileress]", "Attendant", "attendant", "Designer", "Drawing teacher", "dishwasher", "Ins. clerk", "Insurance clerk", "Interior decorator", "Kitchen"),
+    "Blue Collar" = c("Forelady", "forewoman", "Lamp Inspector", "Factory work", "Factory Work", "Packer", "Assembler", "Factory Operator", "Forewoman", "General Worker", "Mach. Operator", "Machine Operator", "Mill Hand", "Mill work", "Mill Worker", "Operator", "Rubind Mach. Feeder", "Sealing & Operating", "Spinner", "Spooler", "Metal worker", "milliner", "Milliner", "millinery"),
+    "Housewife" = c("At home", "at home", "At home", "At Home, Housekeeper", "At Home, Modiste", "At Home, Widow", "housewife", "Housewife", "Housewife, At Home", "housewife, married", "Housewife, Married", "Married, housewife", "Married, Housewife", "None, At Home", "house-wife", "Married None", "married housewife", "Married Housewife", "domestic", "Domestic", "[Home]", "[Housework]"),
+    "Student" = c("Student", "student"),
+    )
+  ) %>%
+  group_by(Ward, occupation_category) %>%
+  summarize(
+    mean_value = mean(Age),
+    minage= min(Age),
+    maxage= max(Age),
+    count = n(),
+    .groups = "drop")
+
+bwvcollars <- bwvclean %>%
+  filter(occupation_category == "White Collar" | occupation_category =="Blue Collar" | occupation_category == "Pink Collar" | occupation_category == "Student" | occupation_category == "Housewife") %>%
+  arrange(Ward, occupation_category)
+
+#I also ran the following code to get the average age of each of my categories across wards.
+bwvcollars %>% group_by(occupation_category) %>% summarize(mean_age = mean(mean_value))
+  
 ```
 
 (@) What did you discover? Write 2-3 sentences about what this tells us about Boston women voters.
 
->
+> First off, in Ward 2, there were only white collar workers and housewives who voted. Wards 1, 4-11, 13, 16, 18, and 19 were the only wards with blue collar workers who voted. Students who voted were located in wards 1, 6, 8, 10, 11, and 13. Housewife voters were the oldest group across all wards, with an average age of 43.1 years. Student voters were the youngest group with an average age of 22.5 years. I didn't clean up the data entirely, so some professions may be omitted that would change this observation, but the categories I used were pretty broad and I think I got a lot of the data cleaned up and sorted into them.
 
 
