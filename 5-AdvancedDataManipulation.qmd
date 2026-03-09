@@ -445,6 +445,9 @@ These all create "Date" objects that R knows how to work with.
 mdy("12/08/2001")
 dmy("12-08-2001")
 ymd("2001-12-08")
+
+dates_demo <- c("12/08/2001", "05/15/1983")
+parsed_dates <- mdy(dates_demo)
 ```
 
 ### Creating Date Columns
@@ -543,8 +546,12 @@ for (i in 1:nrow(gayguides)) {
       print("n/a")
    }
 }
+
+#updated after class on March 9
+gayguides <- gayguides %>%
+  mutate(in_1960s = date %within% sixties)
 ```
-Dr. Regan, please read this: I tried to save this to a variable and it wouldn't save to the variable, then it kept running this for a solid 2 minutes, so I left it alone after this. Can we please go over this in class?
+Dr. Regan, please read this: I tried to save this to a variable and it wouldn't save to the variable, then it kept running this for a solid 2 minutes, so I left it alone after this.
 
 
 ### Handling Historical Dates
