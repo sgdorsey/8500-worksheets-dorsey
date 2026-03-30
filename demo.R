@@ -118,3 +118,68 @@ sc.parks <- sc.parks %>%
 sc.parks <- sc.parks %>%
   pivot_wider(names_from = year, values_from = count)
 #for pivot wider, you don't have to tell it what you don't want
+
+#March 9
+#AI coding tools
+#Copilot sources from your files
+#you can ask it "I don't understand the code on lines 28-29, explain it to me"
+#can only be used as a tool (why your code didn't work, how to do something, etc.) - not analysis
+#you have to be able to explain every code you create
+#look up the functions you don't understand
+#test each piece separately (recommend not using agent mode - it does stuff for you)
+#add comments on it yourself
+#keep questions small and specific
+#never trust the code until you test it
+#helps with syntax, debugging
+#keep notes for what you ask it and what it gives you - could be useful down the road
+#you can use it to whatever level you feel comfortable with - you do not have to use AI on the log
+#on the auto settings, don't use GPT models
+#claude code - requires a subscription, but scary code
+#cursor - requires a subscription, but good for significant digital components for dissertation, free for students for just one year, heavily built on anthropics models
+
+
+#March 30 - Charts
+library(tidyverse)
+library(DigitalMethodsData)
+library(ggplot2)
+data(gayguides)
+
+ggplot(data = gayguides, mapping = aes(x = Year)) + geom_histogram(bins = 30, fill="steelblue", color="white")
+
+#group by number of locations per year
+ggyearly <- gayguides %>% group_by(Year) %>% summarize(count = n())
+ggplot(data = ggyearly, map = aes(x= Year, y=count)) + geom_point()
+#line chart
+ggplot(data = ggyearly, map = aes(x= Year, y=count)) + geom_line()
+#combined
+ggplot(data = ggyearly, map = aes(x= Year, y=count)) + geom_line() + geom_point()
+#line charts in this example are more effective because they show growth
+#color
+#plot the top three states
+top_states <- gayguides %>% count(state, sort=TRUE) %>% head(3) %>% pull(state)
+gg_states <- gayguides %>% filter(state %in% top_states) %>% group_by(Year, state) %>% summarize(count=n())
+ggplot(data=gg_states, mapping=aes(x=Year, y=count, color=state)) + geom_line() + geom_point()
+
+#faceting - creates multiple minis of the same data
+ggplot(data = gg_states, mapping = aes(x=Year, y=count)) + geom_line() + facet_wrap(~ state)
+#works great for topic modeling - different topics across time
+#facet_wrap doesn't take into consideration the axis
+#**facet_grid** standardizes the axis
+ggplot(data = gg_states, mapping = aes(x=Year, y=count)) + geom_line() + facet_wrap(state ~ .)
+
+#gayguides, type
+gg_1980 <- gayguides %>% filter(Year == 1980) %>% separate_rows(type, sep=", ") %>% count(type, sort=TRUE) %>% head(10)
+ggplot(data = gg_1980, mapping = aes(x=type, y=n)) + geom_col()
+#makes the chart, but it's messy and jumbled
+ggplot(data = gg_1980, mapping = aes(x=type, y=n)) + geom_col() + coord_flip()
+ggplot(data = gg_1980, mapping = aes(x=reorder(type, n), y=n)) + geom_col()
+#top 5 types in CA and NY
+gg_compare <- gayguides %>% filter(state %in% c("CA", "NY", Year >= 1970)) %>% separate_rows(type, sep=", ") %>% group_by(state, type) %>% summarize(count=n(), .groups="drop") %>% group_by(state) %>% slice_max(count, n=5) %>% ungroup()
+#pulls the top 5 from each state
+ggplot(data = gg_compare, mapping = aes(x=type, y=count, fill=state)) + geom_col()
+#show them next to each other
+ggplot(data = gg_compare, mapping = aes(x=type, y=count, fill=state)) + geom_col(position = "dodge")
+#changing dodge to fill will show the proportions
+#add labels, themes, colors, font size, etc.
+ggplot(data = gg_compare, mapping = aes(x=type, y=count, fill=state)) + geom_col(position = "dodge") + labs(title = "Top 5 location types in NY and CA", x="Number of Locations", y="Type of Location", caption="Source:Mapping the Gay Guides") + theme(plot.title = element_text(size=16, face="bold"))
+#ggsave = save it, and you have options to change DPI
