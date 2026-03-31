@@ -1,7 +1,7 @@
 ---
 title: 'Worksheet 4: Data Visualization'
-author: ""
-date: ""
+author: "Sharon Dorsey"
+date: "03/30/2026"
 ---
 
 _This is the fourth in a series of worksheets for History 8500 at Clemson University. The goal of these worksheets is simple: practice, practice, practice. The worksheet introduces concepts and techniques and includes prompts for you to practice in this interactive document. When you are finished, you should change the author name (above), render your document to a pdf, and upload it to canvas. Don't forget to commit your changes as you go and push to github when you finish the worksheet._
@@ -36,7 +36,7 @@ data(gapminder)
 
 (@) Take a look at the data. What can you say about it? 
 
-> 
+> This data tracks the life expectantcy, population, and GDP per capita for each country for every 5 years beginning in 1952 until 2007.
 
 This data includes variables for life exptenency and per capita GDP. Lets say we want to plot these two variables against each other for all country-years within the dataset. First we have to tell `ggplot()` what our data is. 
 ```{r}
@@ -64,7 +64,10 @@ To summarize what we did above, there were 3 steps we went through. First, tell 
 
 (@) Modify the above plot so that the variables it draws on are life expectancy and population. Then, use a comment to annotate the code and mark each of the 3 parts described above.
 ```{r}
-
+ggplot(data = gapminder, mapping=aes(x = lifeExp, y = pop)) + geom_point()
+#ggplot(data = gapminder) = tells ggplot to use the gapminder dataset
+#mapping=aes(x = lifeExp, y = pop) = tells ggplot to map life expectancy as the x-axis and population as the y axis
+#geom_point() = chooses a scatterplot
 ```
 
 We can make this plot even more complex. Adding another value, color, to `aes()` we can change the color of each dot to correspond to a year. We also might want to rename the x and y-axis so that the labels have a more useful description of the variable. We can do so using the labs function. 
@@ -75,13 +78,18 @@ ggplot(data = gapminder, mapping = aes(x = gdpPercap, y=lifeExp, color=year)) + 
 
 (@) Using the same plot above, can you edit the code to add a trend line? (Hint: You'll need to add another geom)
 ```{r}
-
+ggplot(data = gapminder, mapping = aes(x = gdpPercap, y=lifeExp, color=year)) + geom_point() + geom_smooth() + labs(x="GDP Per Capita", y="Life Expectency in Years", title="Life Expectency and Per Capita GDP by Year") 
 ```
 
 
 (@) The file below contains data about the population of cities in 1930 and their recreation expenditures. Can you create a scatter plot from this data? 
 ```{r}
 rec <- read.csv(file = "https://raw.githubusercontent.com/regan008/DigitalMethodsData/main/raw/Recreation-Expenditures.csv")
+
+ggplot(data = rec, mapping = aes(x = population, y = total_expenditures)) + geom_point()
+
+ggplot(data = rec, mapping = aes(x = total_expenditures, y = population)) + geom_point()
+
 ```
 
 The `geom_point()` function allows us to create scatterplots but its not the only geom within `ggplot2()`.
@@ -99,17 +107,18 @@ ggplot(recreational.data, aes(x = population)) +
 
 (@) Use the Boston Women's voters dataset to create a histogram of the age of voters. 
 ```{r}
-
+data(BostonWomenVoters)
+ggplot(BostonWomenVoters, aes(x = Age)) + geom_histogram()
 ```
 
 (@) By default, `geom_histogram()` is choosing the number of bins. Can you change the number of bins or the bin width? (Hint: How might you look up the options for this function?)
 ```{r}
-
+ggplot(BostonWomenVoters, aes(x = Age)) + geom_histogram(bins = 50)
 ```
 
 (@) Explain, what does changing the number of bins do? 
 
-> 
+> Changing the number of bins changes how many ages are in each grouping. If the number of bins is too high, there are gaps and you can't see the trends in the data. If the number the bins is too low, you can't see any unique or rage trends in the data at all.
 
 ### Barplots 
 
@@ -123,21 +132,27 @@ ggplot(sc.rec, aes(x = state, y = state.expenditures )) +
 
 (@) Using the `gayguides` data, create a bar chart that shows the number of locations in 1980 in South Carolina, Georgia, and North Carolina. 
 ```{r}
-
+data(gayguides)
+carolinaga <- gayguides %>% filter(state %in% c("SC", "GA", "NC", Year=1980)) %>% group_by(state) %>% summarize(count = n())
+ggplot(carolinaga, aes(x = state, y = count)) + geom_col()
 ```
 
 (@) Using the `gayguides` data, plot the number of religious institutions in each state.
 ```{r}
-
+religousgg <- gayguides %>% filter(grepl("religious", gayguides$type, ignore.case = TRUE)) %>% group_by(state) %>% summarize(count = n())
+ggplot(religousgg, aes(x = state, y = count)) + geom_col()
 ```
 
 (@) Formulate a question based on a dataset of your choice. That question should be something that would be appropriately answered by a bar chart. What is the question you want to explore?
 
-<
+< What were the three states with the most "Raunchy Patron" locations, and what was the distribution of those states' locations numerically?
 
 (@) Now write the code to answer that question and use comments (`#`) to explain your thinking as you go.
 ```{r}
-
+rp <- gayguides %>% filter(grepl("(RT)", gayguides$amenityfeatures)) %>% group_by(state) %>% summarize(count = n()) %>% head(3)
+#wrote the code to filter the gayguides dataset by finding all instances of RT (the code for Raunchy Patrons) in the amenity features column, which negated having to split the column apart. Then I grouped it by state, summarized by count, and pulled the top 3 counts using the head() command
+ggplot(data = rp, mapping=aes(x=state, y=count, fill=state)) + geom_col()
+#set up the bar chart by giving the ggplot the data in the rp variable, mapping the state as the x axis and the count of the locations as the y axis, made the bars on the states different colors with the fill option, then told ggplot to create a bar chart
 ```
 
 ### Line Charts
