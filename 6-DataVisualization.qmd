@@ -216,9 +216,9 @@ rec.types2 <- rec.long %>%
       "volunteer" = c("men volunteer", "volunteer", "women volunteer")
     )
   ) %>% 
-  group_by(type_of_worker, year) %>% summarize(count = mean(count, na.rm = TRUE))
+  group_by(type_of_worker, year) %>% summarize(count = mean(count, na.rm = TRUE)) %>% mutate(year = as.numeric(gsub("X", "", year)))
 
-ggplot(rec.types2, aes(x = year, y = count, group = 1)) + geom_line() + facet_wrap(~type_of_worker)
+ggplot(rec.types2, aes(x = year, y = count)) + geom_line() + facet_wrap(~type_of_worker)
 ```
 
 ### Practice
