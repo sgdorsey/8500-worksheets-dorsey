@@ -168,12 +168,14 @@ ggplot(gg.byyear, aes(x = Year, y = count)) +
 
 (@) Create a line chart that shows the number of religious institutions in the gay guides data over time.
 ```{r}
-
+gg.religious <- gayguides %>% filter(grepl("religious", gayguides$type, ignore.case = TRUE)) %>% group_by(Year) %>% summarize(count = n())
+ggplot(gg.religious, aes(x = Year, y = count)) + geom_line()
 ```
 
 (@) In the gayguides data, danger or risk is indicated in several different ways. Sometimes it through the use of an amenity categorization of (HOT) or (AYOR) which meant that these locations were frequented by police and should be used at your own risk. Other times, locations were listed as "inquire locally" in either the description or address field. There are many reasons a location would have requested to have been listed this way. Many times, it was due to harassment and the location deemed it too dangerous to publicly list its location. Can you create a subset of the gay guides data about risk and then use it to create a chart about the usage of these indicators over time? 
 ```{r}
-
+gg.risk <- gayguides %>% filter(grepl("(HOT)|(AYOR)", gayguides$amenityfeatures) | grepl("inquire locally", gayguides$description) | grepl("inquire locally", gayguides$streetaddress)) %>% group_by(Year) %>% summarize(count = n())
+ggplot(gg.risk, aes(x = Year, y = count)) + geom_line()
 ```
 
 
@@ -189,19 +191,34 @@ ggplot(gg.byyear, aes(x = Year, y = count)) +
 
 (@) Using the state recreation data, can you create a chart that outlines the total expenditures in South Carolina by city?
 ```{r}
-
+reccity <- rec %>% filter(state == "SC") %>% group_by(city, year, total_expenditures) %>% summarize(count = n())
+ggplot(reccity, aes(x = year, y = total_expenditures)) + geom_col() + facet_wrap(~city)
 ```
 
 (@) Using the gayguides data can you select 5 types of locations and chart the number of each type between 1965 and 1980? 
 ```{r}
+#locations: "Hotels", "Baths", "Business,Erotic Shop", "Health Clinic", "Gym"
+gg.loc <- gayguides %>% filter(type == "Hotels"| type == "Baths"| type == "Business,Erotic Shop"| type == "Health Clinic"| type == "Gym") %>% filter(Year >= 1965 & Year <= 1980) %>% group_by(type, Year) %>% summarize(count = n())
+ggplot(gg.loc, aes(x = Year, y = count)) + geom_line() + facet_wrap(~type)
 
+#turns out, I picked 5 location types and 3 of them didn't exist in this time frame.
 ```
 
 (@) Using this recreation dataset from last week, can you find the average number of volunteer and paid workers over time? 
 ```{r}
 rec.workers <- read.csv("https://raw.githubusercontent.com/regan008/DigitalMethodsData/main/raw/RecreationData-Wide.csv")
+rec.long <- rec.workers %>% pivot_longer(!city:type_of_worker, names_to = "year", values_to = "count")
+rec.types2 <- rec.long %>% 
+  mutate(
+    type_of_worker = fct_collapse
+    (type_of_worker,
+      "paid" = c("female paid", "male paid"),
+      "volunteer" = c("men volunteer", "volunteer", "women volunteer")
+    )
+  ) %>% 
+  group_by(type_of_worker, year) %>% summarize(count = mean(count, na.rm = TRUE))
 
-
+ggplot(rec.types2, aes(x = year, y = count, group = 1)) + geom_line() + facet_wrap(~type_of_worker)
 ```
 
 ### Practice
