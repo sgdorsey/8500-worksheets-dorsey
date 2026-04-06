@@ -226,25 +226,39 @@ In the slots below use the datasets for class (or a dataset of your choice) to c
 
 (@) Plot 1
 ```{r}
-
+data(BostonWomenVoters)
+southern <- c("Virginia", "South Carolina", "North Carolina","Louisiana", "Arkansas", "Mississippi", "Florida", "Alabama", "Texas", "Tennessee")
+bwv.south <- BostonWomenVoters %>% filter(State.or.Province.of.Birth %in% southern) %>% group_by(State.or.Province.of.Birth) %>% summarize(count = n())
+ggplot(bwv.south, aes(x = State.or.Province.of.Birth, y = count)) + geom_col()
 ```
 
 (@) Plot 1 explanation: 
->
+> This plot charts the number of women in the Boston Women Voters dataset who were born in a southern state (specifically one of the 11 states that seceded from the Union during the Civil War). I wanted to see where women who were originally from southern states were coming from - most women originally from southern states were from Virginia, followed by North Carolina and then South Carolina - since many of them would have either lived through the Civil War or been a direct descendant of someone who did. I wonder if this impacted the voting habits of these women one way or another.
 
 (@) Plot 2
 ```{r}
-
+data(almshouse_admissions)
+grouped_almshouse <- almshouse_admissions %>% group_by(Year.Admitted) %>% summarize(count = n()) %>% filter(Year.Admitted >= 1793)
+ggplot(grouped_almshouse, aes(x=Year.Admitted, y=count)) + geom_line() + geom_point()
 ```
 
 (@) Plot 2 explanation: 
->
+> This plot is a line plot with points showing the number of almshouse admissions over time. This line graph shows that almhouse admissions jumped significantly beginning in 1800 with a peak in 1803 (there were 442 admissions that year). I wanted to see if significant numbers of admissions corresponded with a major crisis in history (it didn't, but a Google search mentioned that Philadelphia was rebuilding from outbreaks of yellow fever in 1803).
 
 (@) Plot 3. For this one, try a different kind of plot. [Check out a useful gallery here.](https://github.com/regan008/DigitalMethodsData/blob/main/raw/RecreationData-Wide.csv)
 (For this week, avoid choosing a map. We'll talk more about maps and geographic data over the next two weeks.)
 ```{r}
+chsgroup <- charlestonManumissions %>% mutate(
+    Race = fct_collapse
+    (Race,
+      "Black" = c("Black"),
+      "Mixed" = c("Black, Mulatto, Mulatto", "Black/Mustizo", "Black; Mulatto", "Black; Mulatto; Mulatto", "Mulatto or Mustee", "Mestizo", "Mulatto", "Mustee", "Mustizoe"),
+      "Moor" = c("Moor"),
+    )
+  ) %>% group_by(Race) %>% summarize(count = n())
 
+ggplot(chsgroup, aes(x = Race, y = count)) + geom_point()
 ```
 
 (@) Plot 3 explanation: 
->
+> This dot plot shows the number of manumissions broken down by race, where racial categories included "Black," "Mixed Race," "Moor," a blank variable (which had 1 entry), and "NA." This plot shows that most of the manumissions were for Black people, followed closely by those who were a mix of races.
