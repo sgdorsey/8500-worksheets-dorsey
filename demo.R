@@ -183,3 +183,11 @@ ggplot(data = gg_compare, mapping = aes(x=type, y=count, fill=state)) + geom_col
 #add labels, themes, colors, font size, etc.
 ggplot(data = gg_compare, mapping = aes(x=type, y=count, fill=state)) + geom_col(position = "dodge") + labs(title = "Top 5 location types in NY and CA", x="Number of Locations", y="Type of Location", caption="Source:Mapping the Gay Guides") + theme(plot.title = element_text(size=16, face="bold"))
 #ggsave = save it, and you have options to change DPI
+
+
+#April 6 2026
+library(tidyverse)
+install.packages("tidytext")
+install.packages("readtext")
+install.packages("widyr")
+install.packages("SnowballC")
