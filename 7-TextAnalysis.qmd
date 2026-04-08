@@ -69,11 +69,12 @@ Now our textual data is loaded into R but the textual data and the metadata are 
 sotu_whole <- 
   sotu_meta %>%  
   arrange(president) %>% # sort metadata
-  bind_cols(sotu_texts) %>% # combine with texts
+  bind_cols(sotu_texts) %>% # combine with texts (basically adds columns of the text to the metadata columns)
   as_tibble() # convert to tibble for better screen viewing
 
 glimpse(sotu_whole)
 ```
+#has to have the same amount of rows
 
 Now our data is loaded into R and its ready to be pre-processed. 
 
@@ -174,6 +175,8 @@ Now if you compare the word and word_stem columns you can see the effect that wo
 But it does some odd things to words like representatives. Whether this is useful for you will depend on the question your asking (and the OCR accuracy) but its a useful technique to be familiar with nevertheless. 
 
 While stemming can be useful for some applications, it's often problematic for historical research. Stemming algorithms strip words down to roots without understanding historical context or meaning. For example, "suffragist" becomes "suffrag," "temperance" becomes "temper," and "reconstruction" becomes "reconstruct"—losing the specific historical concepts these words represent. Even worse, stemming can collapse historically distinct terms into the same stem: "miner" and "minor" both become "min," or "united" and "union" both stem to "unit." For historians, these distinctions matter. A text analysis of Civil War documents that conflates "union" (the political entity) with "united" (an adjective) produces meaningless results. Similarly, analyzing women's reform movements while collapsing "suffragist," "suffragette," and "suffrage" into "suffrag" erases the meaningful differences between these terms. Unless you have a specific reason to use stemming—like dealing with extremely messy OCR or wanting to capture all grammatical forms of a common word—it's often better to skip this step and work with the original words. 
+#Really good if you're not an Americanist, or if you're building a search and retrieval app
+#you can stem some words, but it depends on the question
 
 ## Analysis
 
@@ -242,14 +245,14 @@ sotu.length <- tidy_sotu %>%
 (@) Filter the dataset to address this discrepancy and the recreate these statistics: 
 ```{r}
 sotu_tv <- tidy_sotu %>%
-  filter(year >= 1947) %>%
+  filter(sotu_type=="written") %>%
   count(president, doc_id)  %>% 
   group_by(president) %>% 
   summarize(avg_words = mean(n)) %>% 
   arrange(desc(avg_words))
 
 sotu_oldschool <- tidy_sotu %>%
-  filter(year < 1947) %>%
+  filter(sotu_type=="speech") %>%
   count(president, doc_id)  %>% 
   group_by(president) %>% 
   summarize(avg_words = mean(n)) %>% 
@@ -283,7 +286,9 @@ tidy_president <- tidy_sotu %>%
 ```
 (@) The code above is commented to help you follow it. Walk through the code above, and explain what each line does in your own words. If its a function you are unfamiliar with, look up the documentation.
 
-> line 276 counts the number of times each word appears per president. 277 groups that output by the president. 278 creates a new column called n_tot, which is the total number of words
+> line 276 counts the number of times each word appears per president. 277 groups that output by the president. 278 creates a new column called n_tot, which is the total number of words, and a column called term_freq (term frequency) that divides the total number of each word by the total number of words per doc to get an average, which gives you the relative frequency. Line 280 arranges the term by descending term frequency. Line 281 pulls the top word for each president. Line 282 prints all the presidents and their top word.
+
+#does this in the gayguides (45 CA entries out of 3000 vs. 45 CA entries out of 2000)
 
 ### TF-IDF
 
