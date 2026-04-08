@@ -102,7 +102,8 @@ The function `unnest_tokens()` also has an option called token. Tokenizing by wo
 
 (@)Use the documentation to tokenize the dataset into sentences: 
 ```{r}
-
+sotu_sentences <- sotu_whole %>%
+  unnest_tokens(sentence, text, token = "sentences")
 ```
 
 We've talked about n-grams loosely in class. But lets define it more formally. An n-gram is a contiguous sequence of n items from a given sample of text or speech. The n stands for the number of items. So for example, a bi-gram is sets of two words. 
@@ -125,7 +126,8 @@ head(sotu_bigrams$bigram)
 
 (@) Use `unest_tokens()` to create tri-grams. 
 ```{r}
-
+sotu_trigrams <- sotu_whole %>%
+  unnest_tokens(trigram, text, token = "ngrams", n=3)
 ```
 
 ### Stopwords
@@ -193,7 +195,10 @@ tidy_sotu <- sotu_whole %>%
 ```
 (@) Before we move forward, take a minute a describe the chunk of code you just ran. What does each section do and how does it reflect the workflow for a topic modeling project? What are the important steps that are unique to topic modeling? 
 
->
+> as.data.frame(sotu_meta) takes the metadata and creates a dataframe from it.
+Line 184 creates a folder within the sotu folder called "sotu_files" that has the file paths for each sotu address. Line 185 takes each of those file paths and makes them an observation in a dataframe, where the doc_id is one column and all of the text is in another.
+Line 192 takes the sotu_whole dataframe and tokenizes it by removing all punctuation and making everything lowercase. It breaks the text down into its individual words by telling the unnest_tokens function to look at the text column, then create a new column titled "word" where all these words will go. This line is particularly unique to topic modeling because it creates the "bag of word" model where order does not matter. Line 194 removes stop words.
+
 
 
 The most basic kind of analysis we might be interested in doing is counting words. We can do that easily using the `count()` function: 
@@ -232,11 +237,23 @@ sotu.length <- tidy_sotu %>%
 
 (@) Think back to the metadata that we loaded about these speeches. Why are the STOU addresses for more modern president's shorter than others? (For example Bush vs Teddy Roosevelt.) What about the presidency, and the State of the Union tradition, changed that would account for this? 
 
->
+> The rise of TV would account for modern presidents' speeches being shorter, since they were expected to fit their speeches into a certain amount of time (google says about 1 hour) so TV companies could return to regular programming. Also, the SOTU used to be primarily aimed at Congress, so they would be explaining legal proposals in more legal terms. Today, the SOTU is televised to a national audience, so the goal is to get the point across to people who are not often well-versed in politics.
 
 (@) Filter the dataset to address this discrepancy and the recreate these statistics: 
 ```{r}
+sotu_tv <- tidy_sotu %>%
+  filter(year >= 1947) %>%
+  count(president, doc_id)  %>% 
+  group_by(president) %>% 
+  summarize(avg_words = mean(n)) %>% 
+  arrange(desc(avg_words))
 
+sotu_oldschool <- tidy_sotu %>%
+  filter(year < 1947) %>%
+  count(president, doc_id)  %>% 
+  group_by(president) %>% 
+  summarize(avg_words = mean(n)) %>% 
+  arrange(desc(avg_words))
 ```
 
 ### Term Frequency
@@ -255,7 +272,7 @@ tidy_sotu_rel.freq <- tidy_sotu %>%
 
 We can assume that words with a high frequency in the text are more important or significant. Here we can find the words with the most significance for each president: 
 ```{r}
-tidy_sotu %>%
+tidy_president <- tidy_sotu %>%
   count(president, word)  %>%  # count n for each word
   group_by(president) %>% 
   mutate(n_tot = sum(n), # count total number of words per doc
@@ -266,7 +283,7 @@ tidy_sotu %>%
 ```
 (@) The code above is commented to help you follow it. Walk through the code above, and explain what each line does in your own words. If its a function you are unfamiliar with, look up the documentation.
 
-> 
+> line 276 counts the number of times each word appears per president. 277 groups that output by the president. 278 creates a new column called n_tot, which is the total number of words
 
 ### TF-IDF
 

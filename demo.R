@@ -191,3 +191,22 @@ install.packages("tidytext")
 install.packages("readtext")
 install.packages("widyr")
 install.packages("SnowballC")
+#text analysis - text must be converted into numbers - specifically vectors of numbers
+#vectors are derived from textual data to reflect various linguistic properties
+#tiny corpus
+tiny_corpus %>%
+  unnest_tokens(word, text) %>%
+#word is the column name, text is where it's pulling from
+  anti_join(stop_words) %>%
+  count(doc_id, word, sort = TRUE) %>%
+  #produces a column n, which is the count
+  pivot_wider(names_from = word, values_from = n, values_fill = 0)
+  #taking out values_fill gives NA values
+  #we're using the standard stopword list, but there are historical ones for other groups
+  #anti_join with stopwords removes common words
+tiny_corpus %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words) %>%
+  count(doc_id, word) %>%
+  bind_tf_idf(word, doc_id, n) %>%
+  arrange(desc(tf_idf))
