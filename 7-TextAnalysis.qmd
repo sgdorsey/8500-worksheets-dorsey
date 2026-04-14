@@ -327,12 +327,23 @@ sotu.tf.idf %>% arrange(desc(tf_idf))
 (@) Pick a president who served more than one term. Filter the dataset and generate both raw word counts and tf-idf scores for that president. What words are most significant in each method? Why and what does that tell you about that president and their administration?  
 
 ```{r}
-
+fdr <- tidy_sotu %>%
+  filter(president == "Franklin D. Roosevelt") %>%
+  count(doc_id, word, sort = TRUE) %>% 
+  bind_tf_idf(word, doc_id, n) %>%
+  arrange(desc(tf_idf))
+```
+```{r}
+gcleve <- tidy_sotu %>%
+  filter(president == "Grover Cleveland") %>%
+  count(doc_id, word, sort = TRUE) %>%
+  bind_tf_idf(word, doc_id, n) %>%
+  arrange(desc(tf_idf))
 ```
 
 (@) What does a high tf-idf score tell us historically? Think about what it means when a word has a high score versus a low score. Why might a word like "watergate" have a very high tf-idf score in Nixon's speeches but a word like "government" has a low score even though it appears frequently? How might you apply this in your own research? What words would you expect to see with high and low scores?
 
->
+> In my own research, I would expect to see words like "cotton," "mills," "workers" to have low tf-idf scores because they appear frequently in my materials.
 
 ### Co-Occurance
 Co-occurrence gives us a sense of words that appear in the same text, but not necessarily next to each other. It shows words that are likely to co-occur. Note that this is different than topic modeling, which we'll discuss next week. 
@@ -366,7 +377,15 @@ sotu_word_pairs %>%
 ```
 (@) Create a network graph that shows the relationship between words that appear between 125 and 175 times.
 ```{r}
-
+sotu_word_pairs %>%
+  filter(n >= 125 & n<= 175) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "tomato") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = TRUE,
+                  point.padding = unit(0.2, "lines")) +
+  theme_void()
 ```
 
 ## Analyzing Historical Journals
@@ -393,13 +412,124 @@ mb <- readtext(paste(getwd(), "/txt/*.txt", sep=""))
 ```
 
 (@) Add code chunks below and intersperse text to explain what you are doing and why.
+```{r}
+mb <- 
+  mb %>%
+  mutate(Filename = str_remove_all(doc_id, "MB_")) %>%
+  arrange(desc(Filename))
+#I created a new column that dropped the "MB_" in the doc_id, which made a column that matched the Filename column in the metadata data frame to prepare for a left join. I arranged it in descending order to make sure the Filename sorting matched.
+metadata <- metadata %>%
+  arrange(desc(Filename))
 
+mb_whole <- 
+  left_join(mb, metadata, by="Filename")
+#I joined the two columns by the corresponding column name.
 
+mb_tidy <- 
+  mb_whole %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words)
+#I created a new dataset that tokenizes the text and removed stop words.
+mb_1930s <-
+  mb_tidy %>%
+  filter(Year %in% c(1930, 1931, 1932, 1933, 1934, 1935, 1936))
+#I filtered the data frame to only include the journals from the 1930s.
+```
 
+#1930s words
+```{r}
+mb_1930s_tfidf <- mb_1930s %>%
+  count(Filename, word, sort = TRUE) %>%
+  bind_tf_idf(word, Filename, n) %>%
+  arrange(desc(tf_idf))
 
+head(mb_1930s_tfidf)
+```
+I thought this test was interesting becuase I can tell that words like "meas" (presumably measurement) and "fig" (figures, I think) probably need to be added to stop words. Without those, scarf has the highest tf-idf score, which makes sense because it's from the February journal. It seems that the two sensical words with the highest tf-idf scores are corresponding to the proper weather to use them or play them.
 
+general tf-idf on the whole corpus
+```{r}
+mb_tidy_tfidf <- mb_tidy %>%
+  count(Filename, word, sort=TRUE) %>%
+  bind_tf_idf(word, Filename, n) %>%
+  arrange(desc(tf_idf))
+
+head(mb_tidy_tfidf)
+
+```
+I had to look up "tierce" and then looked up "quarte" to be sure, but it appears that in the late 1800s, Mind and Body was focused on fencing, since these two counts had the highest tf_idf scores in multiple years. This is interesting because I would wonder how important fencing is culturally, as it appears to be very important here.
+
+Co-occurrence in the 1930s
+```{r}
+mb_1930s_pairs <- mb_1930s %>%
+  pairwise_count(word, Filename, sort=TRUE, upper=FALSE)
+
+head(mb_1930s_pairs)
+```
 
 (@) Choose one of the datasets from this repository or use one of your own: https://github.com/regan008/8510-TextAnalysisData. Note that there are both zip files with .txt files as well as separate metadata files for each publication in this repo. 
 
 Write a text analysis script that explores and asks questions of the texts. At the end write a summary that analyzes the results you found. Be sure to rely on your historical knowledge. What can we learn from applying the strategies you've learned in this worksheet to analyze these documents?
 
+```{r}
+download.file("https://github.com/regan008/8510-TextAnalysisData/raw/refs/heads/main/TheWomanCitizen.zip", "TheWomanCitizen.zip")
+unzip("TheWomanCitizen.zip")
+
+
+metadata <- read.csv("https://raw.githubusercontent.com/regan008/8510-TextAnalysisData/refs/heads/main/WomanCitizenMetadata.csv")
+
+twc <- readtext(paste(getwd(), "/TheWomanCitizen/*.txt", sep=""))
+
+```
+
+```{r}
+twc <- 
+  twc %>%
+  mutate(filename = str_remove_all(doc_id, "MB_")) %>%
+  arrange(desc(filename))
+#I created a new column that dropped the "MB_" in the doc_id, which made a column that matched the Filename column in the metadata data frame to prepare for a left join. I arranged it in descending order to make sure the Filename sorting matched.
+metadata <- metadata %>%
+  arrange(desc(filename))
+
+twc_whole <- 
+  left_join(twc, metadata, by="filename")
+#I joined the two columns by the corresponding column name.
+
+stop_words_custom <- stop_words %>% add_row(word=c("cents", "copy", "10", "1918", "aunt", "jinnie", "jake"), lexicon="NA")
+
+twc_tidy <- 
+  twc_whole %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words_custom)
+```
+
+```{r}
+twc_idf <- twc_tidy %>%
+  count(filename, word, sort=TRUE) %>%
+  bind_tf_idf(word, filename, n) %>%
+  arrange(desc(tf_idf)) %>%
+  filter((word == "india") | (word == "japan"))
+
+
+india_japan <- twc_whole %>%
+  filter(grepl("india | japan", text, ignore.case = TRUE))
+
+head(twc_idf, n=10)
+
+#Then I went to the July 12 document and found the instances of Japan, and I did the same with India in the July 9 edition.
+```
+
+```{r}
+warner <- twc_whole %>%
+  filter(grepl("Warner", text))
+```
+
+```{r}
+twc_pairs <- twc_tidy %>%
+  pairwise_count(word, Filename, sort=TRUE, upper=FALSE)
+
+head(twc_pairs)
+```
+
+
+At first, the tf-idf returned names that were part of a story (though it is significant that a story took most of the idf calculations in the August 31 journal), so I added them to the stopwords list and re-ran the code, which provided significant tf-idf numbers for "india," and "japan." From there, I manually used control+F to find the context of Japan in July. I discovered that the reason the document is so reliant on Japan is because there was a multiple page letter and report on Professor Caroline E. Furness' visit to Japan, where she gave the Women's Patriotic League of Japan a letter supporting suffrage. Historically, Dr. Furness appears to be a well-known, outspoken supporter of women's suffrage. In the July 9 edition, I discovered that "india" did not refer to the country (which I though might be part of a campaign to raise funds for overseas efforts, if it was), but either "Indiana" or "Indian," neither of which proved to be helpful. In these documents and this exercise, we can learn how to customize stop words and when it is appropriate to do so, as well as learning about the ways that text analysis can go wrong if you do not look at the actual source (for example, if I hadn't looked, I woudl not have known that all the examples of "india" did not refer to the country, but were part of other words.

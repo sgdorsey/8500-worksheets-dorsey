@@ -210,3 +210,24 @@ tiny_corpus %>%
   count(doc_id, word) %>%
   bind_tf_idf(word, doc_id, n) %>%
   arrange(desc(tf_idf))
+
+#April 13 - Topic Modeling
+#LDA - fitting the model (could be round or weird)
+#ac.lda <- LDA(ac.dtm, k=20, control = list(seed = 12345), method = "Gibbs", alpha = 0.5)
+#LDA() function - takes document term matrix
+#K - number of topics. Will need to be adjusted (too many = too specific or repetitive, too few = everything gets mushed together)
+#Topic number - sweet spot is when you have an OCR errors topic
+#Seed - referred to as "setting the seed" - probability algorithm - allows you to reproduce your results (if no seed, you will get a different response every time)
+#Method - lots of types - Gibbs is good. New model is BERT (transformer) - good but predictive. Default is VEM.
+#alpha - defines Dirchlet distribution of topics
+# - hyperparameter (value is set before model is trained)
+# - high - documents likely to be represented by a mixture
+# - low - documents likely to be dominated
+#iterations = randomly assigns words to five topics, then iterates through the words 2000 times
+#burnin = drops the first 1000 iterations and uses everything else
+
+#after training model
+#Beta values - probability of words belonging to a specific topic (higher leads to topics with more similar words, lower = topics with more distinct and varied word distributions) - basically the word-topic distribution
+#gamma - probability of each document being generated from each topic (high for a particular topic and document suggests the doc is heavily influenced by that topic - means a large proportion of its words are likely drawn from that topic's word distribution)
+  #if a word you expect to see one place pops up in another, go look at it (WWI spiking in 1930)
+  #can plot over time
