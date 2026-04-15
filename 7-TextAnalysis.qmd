@@ -503,6 +503,19 @@ twc_tidy <-
   anti_join(stop_words_custom)
 ```
 
+
+```{r}
+twc_idf <- twc_tidy %>%
+  filter((month == "June")) %>%
+  count(filename, word, sort=TRUE) %>%
+  bind_tf_idf(word, filename, n) %>%
+  arrange(desc(tf_idf)) %>%
+
+
+
+head(twc_idf, n=10)
+```
+
 ```{r}
 twc_idf <- twc_tidy %>%
   count(filename, word, sort=TRUE) %>%

@@ -1,4 +1,4 @@
-# Week [X] Learning Log
+# Week [7] Learning Log
 
 **Student Name:** [Sharon Dorsey]  
 **Week of:** [4/6/26]  
@@ -32,7 +32,7 @@ I was trying to read in the text of The Women Citizen.
 I kept getting an unexpected symbol in the code, it gave me an invalid zip name argument, etc.
 
 
-**Did you use AI to troubleshoot this challenge?** [Yes / No]
+**Did you use AI to troubleshoot this challenge?** Yes
 
 ---
 
@@ -40,78 +40,65 @@ I kept getting an unexpected symbol in the code, it gave me an invalid zip name 
 
 **My prompt to AI:**
 ```
-[Copy your exact prompt here]
+On line 477 and 478, I continually get an invalid zip name argument.
+THEN
+How would I read the files in the zip folder into the global workspace
 ```
 
 **AI's response:**
 ```r
-# Paste the relevant code or explanation AI provided -- this can brief and abbreviated or summarized if the response is long.
+#The original response told me to add the .zip extension, but didn't fix the problem, so I reworded the prompt to be more specific. This is the response to the second prompt.
+
+The worksheet already uses readtext(). After unzipping, TheWomanCitizen.zip will extract to a folder called TheWomanCitizen/. You can read all the .txt files from it the same way line 411 does for the txt/ folder. Replace the placeholder readfile on line 484 with:
+
+twc <- readtext(paste(getwd(), "/TheWomanCitizen/*.txt", sep=""))
+
 ```
 
 **How I evaluated the AI's suggestion:**
 
 **What I implemented and why:**
-[Which parts of the AI's suggestion were appropriate?]
+All parts were appropriate.
 
 **What I modified and why:**
-[What did you change? Why was the change necessary?]
+I copied and pasted this line of code into the worksheet, and then broke it down into pieces to make sure I understood it. This line mimicked a line earlier in the worksheet, but I just could not figure out the right way to type it without it giving me an error message.
 
 **What I rejected and why:**
-[What suggestions did you not use? Why were they inappropriate?]
+N/A
 
 **Additional resources I consulted:**
-- [ ] Documentation for [package/function]
+- [x] Documentation for [readtext]
 - [ ] Stack Overflow: [describe]
 - [ ] Course materials: [which ones]
 - [ ] Slack discussion
 - [ ] Office hours
-- [ ] Other: [describe]
+- [x] Other: [I googled this heavily.]
 
 
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ---
 
-#### If NO, I didn't use AI:
-
-**Why I chose not to use AI:**
-[Explain your reasoning - wanted to understand it myself, AI struggles with this type of problem, etc.]
-
-**My problem-solving process:**
-1. [First attempt - what you did and what happened]
-2. [Second attempt - what you did and what happened]
-3. [Additional attempts if relevant]
-
-**Resources I consulted:**
-- [ ] Documentation for [package/function]
-- [ ] Stack Overflow: [describe what you searched for]
-- [ ] Course materials: [which ones]
-- [ ] Slack discussion
-- [ ] Office hours
-- [ ] Other: [describe]
-
----
-
 **Resolution:**
-[What ultimately worked or where you're still stuck]
+The suggestion from Claude Code worked and I just needed to rewrite the code to read it in.
 
 **What I learned:**
-[What did this teach you? Did AI help or hinder your understanding?]
+AI did help my understanding, especially when it came to the parts of the code to read in files from a .zip folder.
 
 **Verification:**
-[How did you verify the code worked correctly? What did you test?]
+I ran it, then compared the files in the Global environment to the number of observations in the metadata. Since they were the same and there were not any duplicates, I knew it worked correctly.
 
 ---
 
-### Challenge 2: [Brief descriptive title]
+### Challenge 2: Left Join Issues
 
 **What I was trying to do:**
-[Describe the task or problem]
+I was trying to do a left join with the metadata and the text column for The Woman Citizen.
 
 **What went wrong:**
-[Describe the error, confusion, or roadblock]
+I could not get the join to include the text at all (but I did fix that separately), then I kept getting the error: "Filename not found."
 
-**Did you use AI to troubleshoot this challenge?** [Yes / No]
+**Did you use AI to troubleshoot this challenge?** Yes
 
 ---
 
@@ -119,24 +106,31 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 **My prompt to AI:**
 ```
-[Copy your exact prompt here]
+Why is the left join on line 507 not working
 ```
 
 **AI's response:**
 ```r
-# Paste the relevant code or explanation AI provided -- this can brief and abbreviated or summarized if the response is long.
+#Problem 1: twc_tidy's column was filename, but the code block had "Filename" two lines down so it was case sensitive.
+#Problem 2: the left_join was included in a pipe, so the original code wanted to try and join a piped data frame, twc_tidy, and metadata by the "filename" column (making it 4 arguments) but the left_join() only has 3 arguments, not four. Claude wanted me to 
+twc_idf <- twc_tidy %>%
+  count(filename, word, sort=TRUE) %>%
+  bind_tf_idf(word, filename, n) %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(month = str_extract(filename, "^[A-Za-z]+")) #to extract the part of the file name that had letters in order to create a new column for months so I could sort and filter the data again.
+
+head(twc_idf, n=10)
 ```
 
 **How I evaluated the AI's suggestion:**
 
 **What I implemented and why:**
-[Which parts of the AI's suggestion were appropriate?]
-
+I fixed the capitalization error, which did fix that. 
 **What I modified and why:**
-[What did you change? Why was the change necessary?]
+I added mutate(filename = str_remove_all(doc_id, "MB_")) in the twc dataframe, arranged each dataframe in descending order, then did a left_join as usual. For the twc_idf dataframe, I put the line to filter to a certain month at the beginning of the code block instead of at the end, which worked.
 
 **What I rejected and why:**
-[What suggestions did you not use? Why were they inappropriate?]
+I did not use the str_extract command, since I realized that there was an easier way to do this if I looked at the doc_id and created a new column for filename that dropped "_MB" in each doc_id.
 
 **Additional resources I consulted:**
 - [ ] Documentation for [package/function]
@@ -148,51 +142,29 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ---
 
-#### If NO, I didn't use AI:
-
-**Why I chose not to use AI:**
-[Explain your reasoning - wanted to understand it myself, AI struggles with this type of problem, etc.]
-
-**My problem-solving process:**
-1. [First attempt - what you did and what happened]
-2. [Second attempt - what you did and what happened]
-3. [Additional attempts if relevant]
-
-**Resources I consulted:**
-- [ ] Documentation for [package/function]
-- [ ] Stack Overflow: [describe what you searched for]
-- [ ] Course materials: [which ones]
-- [ ] Slack discussion
-- [ ] Office hours
-- [ ] Other: [describe]
-
 ---
 
 **Resolution:**
-[What ultimately worked or where you're still stuck]
+Ultimately, the AI suggestion worked when I made a new column in the twc dataframe that matched metadata's filename set up, then fixed a capitalization mismatch.
 
 **What I learned:**
-[What did this teach you? Did AI help or hinder your understanding?]
-
+It taught me that sometimes the AI gives me suggestions I don't understand and might honestly be harder to work with. Now I have a column with the month in that dataframe which could be helpful.
 **Verification:**
-[How did you verify the code worked correctly? What did you test?]
-
+I tried them both and then viewed each dataset to make sure everything joined properly and was filtered correctly.
 ---
 
 ## Reflection
 
 **What I understand well now:**
-[What clicked for you this week?]
-
+I think the process of tf-idf is clear.
 **What I'm still confused about:**
-[What remains unclear? What questions do you have?]
+I don't think I'm confused about it, but figuring out how to work around OCR errors is frustrating. I also wonder how large the tf-idf value needs to be for it to be significant?
 
 **How AI affected my learning this week:**
-[Did AI help you understand concepts better? Did it create confusion? Did it save time or create new problems? Be specific.]
+AI did help by explaining exactly what the problem was with my syntax, though it did want to add in code I wasn't familiar with and therefore I decided not to use.
 
 **Evolving AI strategy:**
-[How are you getting better at using AI? What have you learned about when/how to use it effectively? What prompting strategies are working?]
+Giving it specific examples of the error code or what I've already done seems to work best. Telling it to explain the process of what went wrong has helped me learn where the issue was at/
 
 **Connection to historical research:**
-[How might this week's skills apply to your research?]
-
+I could see myself using tf-idf in denominational newspapers, since I frequently work with those, so I think I would use this extensively.

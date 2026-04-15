@@ -125,7 +125,7 @@ ac_top_terms <- ac_topics %>%
 print(ac_top_terms)
 
 # Visualize
-ac_top <- ac_topics %>%
+ac_topics %>%
   group_by(topic) %>%
   top_n(8, beta) %>%
   ungroup() %>%
@@ -191,7 +191,7 @@ topics_by_time %>%
 # ==============================================================================
 
 # Try k=3 (fewer topics)
-ac_lda_3 <- LDA(ac_dtm, k = 5, method = "Gibbs",
+ac_lda_3 <- LDA(ac_dtm, k = 14, method = "Gibbs",
                 control = list(seed = 12345, iter = 2000, burnin = 1000))
 
 tidy(ac_lda_3, matrix = "beta") %>%
@@ -203,5 +203,5 @@ tidy(ac_lda_3, matrix = "beta") %>%
   geom_col(show.legend = FALSE) +
   facet_wrap(~ topic, scales = "free") +
   scale_y_reordered() +
-  labs(title = "With k=3 topics")
+  labs(title = "With k=9 topics")
 
