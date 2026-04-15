@@ -40,10 +40,12 @@ file_paths <- system.file("TheAmericanCity/")
 ac_texts <- readtext(paste("TheAmericanCity/", "*.txt", sep=""))
 ac_whole <- full_join(meta, ac_texts, by = c("filename" = "doc_id")) %>% as_tibble() 
 
+stop_words_ac <- stop_words %>% add_row(word=c("city", "american"), lexicon="NA")
+
 tidy_ac <- ac_whole %>%
   unnest_tokens(word, text) %>% 
   filter(str_detect(word, "[a-z']$")) %>% 
-  anti_join(stop_words)
+  anti_join(stop_words_ac)
 
 tidy_ac <- tidy_ac %>% filter(!grepl('[0-9]', word))
 
@@ -79,8 +81,26 @@ The second important option when running `LDA()` is the seed option. You don't w
 
 Lets now train our model. This will take a few minutes: 
 ```{r}
-ac.lda <- LDA(ac.dtm, k = 5, control = list(seed = 12345))
-ac.lda
+ac.lda5 <- LDA(ac.dtm, k = 5, methods = "Gibbs", control = list(seed = 12345, iter = 2000, burnin = 1000))
+ac.lda5 #overlaps too much
+```
+```{r}
+ac.lda12 <- LDA(ac.dtm, k = 12, methods = "Gibbs", control = list(seed = 12345))
+ac.lda12
+```
+```{r}
+ac.lda3 <- LDA(ac.dtm, k = 3, control = list(seed = 12345))
+ac.lda3
+```
+
+```{r}
+ac.lda4 <- LDA(ac.dtm, k = 4, control = list(seed = 12345))
+ac.lda4
+```
+
+```{r}
+ac.lda2 <- LDA(ac.dtm, k = 2, control = list(seed = 12345))
+ac.lda2
 ```
 
 Now we have a LDA topic model that has 5 topics. There are two ways to look at this model: word-topic probabilities and document-topic probabilities. 
@@ -95,7 +115,7 @@ We will look at both. Lets start with the beta values or the **word-topic probab
 Every topic is made up of words that are most associated with that topic. Together these words typically form some sort of theme. To understand what this looks like the easiest thing to do is create a bar chart of the top terms in a topic. 
 
 ```{r}
-ac.topics <- tidy(ac.lda, matrix = "beta")
+ac.topics <- tidy(ac.lda5, matrix = "beta")
 head(ac.topics)
 ```
 What we have here is a list of topics and the weight of each term in that topic. Essential we have turned this into a one-topic-per-term-per-row format. So, for example, the term 10th has a weight of 5.135047e-05 in topic 1 but 7.269700e-05 in topic 2. Now that doesn't mean a lot to us at this moment and this format is impossible to grasp in its current size and iteration, but we can use tidyverse functions to pair this down and determine the 10 terms that are most common within each topic. 
