@@ -57,68 +57,33 @@ I added "american" and "city" to the stopwords list so it would remove those.
 ---
 
 **Resolution:**
-[What ultimately worked or where you're still stuck]
+I still could not get topics that made any sense and were not repeating so much. In class, we discussed that the sample may be too small.
 
 **What I learned:**
-[What did this teach you? Did AI help or hinder your understanding?]
-
-**Verification:**
-[How did you verify the code worked correctly? What did you test?]
+Too few years of a journal will really make a difference in the ability to topic model. 
 
 ---
 
-### Challenge 2: [Brief descriptive title]
+### Challenge 2: [Topic Model Numbers]
 
 **What I was trying to do:**
-[Describe the task or problem]
+I was trying to figure out how many topics I needed for the Mind and Body corpus issues from 1930-1936.
 
 **What went wrong:**
-[Describe the error, confusion, or roadblock]
+I am honestly not sure what is going wrong. I think I can't see the forest for the trees, and I'm getting so hung up on the individual words that I'm missing the topic as a whole. I notice that words are frequently repeated in similar positions.
 
-**Did you use AI to troubleshoot this challenge?** [Yes / No]
+**Did you use AI to troubleshoot this challenge?** [No]
 
 ---
-
-#### If YES, I used AI:
-
-**My prompt to AI:**
-```
-[Copy your exact prompt here]
-```
-
-**AI's response:**
-```r
-# Paste the relevant code or explanation AI provided -- this can brief and abbreviated or summarized if the response is long.
-```
-
-**How I evaluated the AI's suggestion:**
-
-**What I implemented and why:**
-[Which parts of the AI's suggestion were appropriate?]
-
-**What I modified and why:**
-[What did you change? Why was the change necessary?]
-
-**What I rejected and why:**
-[What suggestions did you not use? Why were they inappropriate?]
-
-**Additional resources I consulted:**
-- [ ] Documentation for [package/function]
-- [ ] Stack Overflow: [describe]
-- [ ] Course materials: [which ones]
-- [ ] Slack discussion
-- [ ] Office hours
-- [ ] Other: [describe]
-
 ---
 
 #### If NO, I didn't use AI:
 
 **Why I chose not to use AI:**
-[Explain your reasoning - wanted to understand it myself, AI struggles with this type of problem, etc.]
+I want to figure out how to understand this myself. I also think this is a conceptual problem, not a technical one.
 
 **My problem-solving process:**
-1. [First attempt - what you did and what happened]
+1. I've tried the following k numbers = 10, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25
 2. [Second attempt - what you did and what happened]
 3. [Additional attempts if relevant]
 
@@ -127,36 +92,27 @@ I added "american" and "city" to the stopwords list so it would remove those.
 - [ ] Stack Overflow: [describe what you searched for]
 - [ ] Course materials: [which ones]
 - [ ] Slack discussion
-- [ ] Office hours
+- [x] Office hours
 - [ ] Other: [describe]
 
 ---
 
 **Resolution:**
-[What ultimately worked or where you're still stuck]
+I ultimately went with 22 topics because I could finally make sense of some of them, but I don't think it's a good output.
 
 **What I learned:**
-[What did this teach you? Did AI help or hinder your understanding?]
-
-**Verification:**
-[How did you verify the code worked correctly? What did you test?]
+I learned that I need to practice topic modeling more. 
 
 ---
 
 ## Reflection
 
 **What I understand well now:**
-[What clicked for you this week?]
+I understand the point of topic modeling and the technical side of how to do it.
 
 **What I'm still confused about:**
-[What remains unclear? What questions do you have?]
-
-**How AI affected my learning this week:**
-[Did AI help you understand concepts better? Did it create confusion? Did it save time or create new problems? Be specific.]
-
-**Evolving AI strategy:**
-[How are you getting better at using AI? What have you learned about when/how to use it effectively? What prompting strategies are working?]
+I'm still struggling to figure out the correct number of topics. I know it's supposed to be a "feel" thing but I am not feeling it.
 
 **Connection to historical research:**
-[How might this week's skills apply to your research?]
+I want to use topic modeling, because I can see a lot of usefulness especially with newspapers that I work with, but I have to figure out how to work it more.
 

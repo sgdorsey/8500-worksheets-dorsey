@@ -40,7 +40,7 @@ file_paths <- system.file("TheAmericanCity/")
 ac_texts <- readtext(paste("TheAmericanCity/", "*.txt", sep=""))
 ac_whole <- full_join(meta, ac_texts, by = c("filename" = "doc_id")) %>% as_tibble() 
 
-stop_words_ac <- stop_words %>% add_row(word=c("city", "american"), lexicon="NA")
+stop_words_ac <- stop_words %>% add_row(word=c("city", "american", "street"), lexicon="NA")
 
 tidy_ac <- ac_whole %>%
   unnest_tokens(word, text) %>% 
@@ -81,15 +81,22 @@ The second important option when running `LDA()` is the seed option. You don't w
 
 Lets now train our model. This will take a few minutes: 
 ```{r}
-ac.lda5 <- LDA(ac.dtm, k = 5, methods = "Gibbs", control = list(seed = 12345, iter = 2000, burnin = 1000))
-ac.lda5 #overlaps too much
+ac.lda5 <- LDA(ac.dtm, k = 5, methods = "Gibbs", control = list(seed = 12345))
+ac.lda5 
+#overlaps too much
+```
+
+```{r}
+ac.lda15 <- LDA(ac.dtm, k = 16, methods = "Gibbs", control = list())
+
+
 ```
 ```{r}
 ac.lda12 <- LDA(ac.dtm, k = 12, methods = "Gibbs", control = list(seed = 12345))
 ac.lda12
 ```
 ```{r}
-ac.lda3 <- LDA(ac.dtm, k = 3, control = list(seed = 12345))
+ac.lda3 <- LDA(ac.dtm, k = 3,methods = "Gibbs", control = list(seed = 12345))
 ac.lda3
 ```
 
@@ -122,7 +129,7 @@ What we have here is a list of topics and the weight of each term in that topic.
 ```{r}
 ac.top.terms <- ac.topics %>%
   arrange(desc(beta)) %>% 
-  group_by(topic) %>% slice(1:10) 
+  group_by(topic) %>% slice(1:20) 
 
 ac.top.terms %>%
   mutate(term = reorder_within(term, beta, topic)) %>%
@@ -151,6 +158,7 @@ wordcloud(topic1$term, topic1$beta, max.words = 100, random.order = FALSE,
 
 (@) Look at the topic words in each topic. Can you give each topic a descriptive label based on what it seems to be about? For example, if a topic has words like "street", "traffic", "paving", and "sidewalk," you might call it "Urban Infrastructure."
 
+#I tried this all weekend and could not get something that gave me decently interpretable topics. I keep getting "street" and the same other four words over and over in every topic.
 Topic 1:
 Topic 2: 
 Topic 3:
@@ -162,7 +170,7 @@ Not all topics will be immediately interpretable and that is normal. Some might 
 Now we can see what words are most common in each topic. But the document-topic probabilities are also useful for understanding what topics are prevalent in what documents. Just as each topic is made up of a mixture of words, the LDA algorithm also assumes that each topic is made up of a mixture of topics. 
 
 ```{r}
-ac.documents <- tidy(ac.lda, matrix = "gamma")
+ac.documents <- tidy(ac.lda5, matrix = "gamma")
 head(ac.documents)
 ```
 For each document, the model gives us an estimated proportion of what words in the document are from a topic. So for the April 1915 issue it estimates that about 23% of the words are from topic 1. The gamma number represents the posterior topic distribution for each document. 
@@ -205,11 +213,11 @@ Before you start coding, articulate what you want to explore:
 
 (@) What corpus did you choose and why?
 
-> I chose The Woman Citizen corpus because I struggled with it in the last worksheet, and I'm not going to be defeated by OCR errors.
+> I chose the Mind and Body corpus because I thought it would be interesting to look at 
 
 (@) What historical question(s) could topic modeling help you explore with this corpus? (Examples: How did discourse change over time? What topics dominated during specific periods? Can we detect shifts related to major historical events?)
 
->
+> What topics are particularly important in the years immediately after the Great Depression began, and are there noticeable shifts in the content of the journals as the Depression continues in the 1930s?
 
 ### Step 2: Build Your Topic Model
 
@@ -217,73 +225,149 @@ Before you start coding, articulate what you want to explore:
 # Download and load your chosen corpus
 # Join with metadata
 # Tokenize and clean
+#I already had the MindandBody zip file in my folder, so I am starting with unzipping it.
+
+unzip("MindAndBody.zip")
+
+
+metadata <- read.csv("https://raw.githubusercontent.com/regan008/8510-TextAnalysisData/refs/heads/main/mb-metadata.csv")
+
+meta <- as.data.frame(metadata)
+#meta$Filename <- paste("MB_", meta$Filename, sep="")
+file_paths <- system.file("MindAndBody/")
+mb_texts <- readtext("txt")
+mb_texts <- mb_texts %>%
+  mutate(Filename = str_remove_all(doc_id, "MB_")) %>%
+  arrange(desc(Filename))
+mb_whole <- full_join(meta, mb_texts, by = c("Filename")) %>% filter(Year <= 1936 & Year >= 1930) %>% as_tibble()
+
+stop_words_mb <- stop_words %>% add_row(word=c("mind", "body", "Vol.", "42", "No.", "physical", "education", "digitized"), lexicon="NA")
+
+tidy_mb <- mb_whole %>%
+  unnest_tokens(word, text) %>% 
+  filter(str_detect(word, "[a-z']$")) %>% 
+  anti_join(stop_words_mb)
+
+tidy_mb <- tidy_mb %>% filter(!grepl('[0-9]', word))
 
 
 ```
 
 ```{r}
 # Create your document-term matrix
-
-
+tidy_mb_words <- tidy_mb %>% count(Filename, word)
+mb.dtm <- tidy_mb_words %>% 
+  cast_dtm(Filename, word, n)
 ```
 
 ```{r}
 # Experiment with different k values (number of topics)
 # Start with k = 10, then try 15, 20, 25, etc. Sometimes the "right" number of topics will be an odd number like 12.
 # What number gives you the most interpretable topics?
+mb.lda18 <- LDA(mb.dtm, k = 18, methods = "Gibbs", control = list(seed = 12345))
+mb.topics <- tidy(mb.lda18, matrix = "beta")
+head(mb.topics)
+mb.top.terms <- mb.topics %>%
+  arrange(desc(beta)) %>% 
+  group_by(topic) %>% slice(1:20) 
 
+mb.top.terms %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  scale_y_reordered()
+```
 
+```{r}
+mb.lda23 <- LDA(mb.dtm, k = 22, methods = "Gibbs", control = list(seed = 12345))
+mb.topics23 <- tidy(mb.lda23, matrix = "beta")
+head(mb.topics23)
+mb.top.terms23 <- mb.topics23 %>%
+  arrange(desc(beta)) %>% 
+  group_by(topic) %>% slice(1:30) 
+
+mb.top.terms23 %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(beta, term, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  scale_y_reordered()
 ```
 
 (@) How many topics did you settle on? Why did you choose this number?
 
->
+> I settled on 22 because it seemed to give me the most distinct topics without too much overlap.
 
 ### Step 3: Interpret Your Topics
 
 ```{r}
 # Generate top terms for each topic
-
+This is included in the block above
 
 ```
 
 ```{r}
 # Visualize top terms
-
+Included in above block
 
 ```
 
 (@) Label each of your topics based on the top words. What does each topic seem to be about?
 
-| Topic Number | Label/Description | Top 5 Words |
-|--------------|-------------------|-------------|
-| 1            |                   |             |
-| 2            |                   |             |
-| 3            |                   |             |
-| ...          |                   |             |
+1 - School PE - health, school, medical, schools, program, teachers, training, pupils
+2 - Benefits and Components of School PE - school, health, left, time, schools, life, child, children, mental, hygiene, program, play, pupils, exercises
+3 - Instructions - hang, jump, forward, backward, stand, time, repeat
+4 - Children's Medical - children, school, health, meas, left, child, massage...spinal, tuberculosis, scoliosis
+5 - Components of Health Programs/Diet? - left, arms, forward, children, swing, health, trunk, sideward, vitamin, food, calcium
+6 - Non-Exercise Health Related/Dr's Appointments? - health, swing, school, heart, left...dr, food, water, teeth, committee, medical, association, questions
+7 - Child Development - children, activities, left, school, health, social, life, time, girls, women, food, growth, development, conditions, dr, normal, boys
+8 - ????
+9 - Vitals/Measurements - children, school, activities, training, health, program, rhythmic, posture, meas, educational, mechanics, vision, foot, age
+10 - Tuberculosis - tuberculosis, patient, position, treatment, health, climate
+11 - Swimming - forward, left, swing, children, rope... backward, water, front, stroke, jump, climbing
+12 - Arm Related Words - ladder, jump, hang, grip, hands, beams, cross
+13 - Technical Terms - left, arms, arm, forw, step, life, medical, book, swing, training, forward, ranks
+14 - Dancing - measures, children, school, time, center, forward, steps, waltz
+15 - College - health, school, left, children, games...mental, life, york, speech, university, college, city
+16 - Gymnastics - left forward grasp saddle repeat (also includes swing, pommels, legs, gumnastics, riding)
+17 - Body positions - arms, forw, swing, meas, sidew, trunk, bend, knees, chest
+18 - Movement Based Exercises (Maybe a gymnastics/dance combination) - stand, forward, school, position, roll, time arms, hands, backward...dance, left, feet, art
+19 - ???
+20 - Public Facilities? - activities, health, children, life, play...asbestors, leaders, chairman
+21 - Health Information? - life, blood, knee, normal, oxygen, home, pressure
+22 - Exams/Tests in School - health, school, play, children, ball, mental, arms, field, training, leaders, examination, development
 
 (@) Are there any topics that don't make sense or seem to mix unrelated concepts? This is normal - not every topic will be interpretable.
 
->
+> Topic 19 mixes a lot of the terms in a way I can't seem to make sense of. Topic 8 seems to do something similar.
 
 ### Step 4: Analyze Topics Over Time
 
 ```{r}
 # Join document-topic probabilities with metadata
 # Plot topics over time
-
-
+mb.documents <- tidy(mb.lda23, matrix = "gamma")
+head(mb.documents)
+mb.documents %>%  filter(document == "1931_Dec.txt") %>% arrange(desc(gamma))
+topics.by.year <- full_join(mb.documents, metadata, by = join_by(document == Filename))
+topic10 <- topics.by.year %>% filter(topic == 10)
+topic10$issue_date <- paste(topic10$Month, " ", topic10$Year, sep = "")
+ggplot(data=topic10, aes(x=issue_date, y=gamma)) + geom_bar(stat="identity") + facet_wrap(~ topic, scales = "free") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
 (@) What patterns do you see? Do certain topics appear more frequently in specific time periods? How does this align with what you know about the historical context?
 
->
+> In December 1931, the topic of tuberculosis was incredibly high, so I went to look at what was going on with tuberculosis in 1931. I found that in December of 1931, the New York Tuberculosis and Health Association did their yearly Christmas stamp campaign, which sought to raise awareness and funds for tuberculosis.
 
 ### Step 5: Historical Analysis
 
 (@) Write 3-4 paragraphs analyzing your findings. Address your original research question(s) and connect your computational findings to historical context. What can topic modeling reveal about this corpus that close reading alone might miss? What are the limitations of this approach? 
 
->
+> In looking at the Mind and Body corpus, my original research question sought to discover if any topics dominated the discussion of the journals after the 1929 stock market crash, and if the continuing circumstances of the Great Depression caused topics of the journal to change over time. After conducting topic modeling on the corpus, I noticed a particular topic (number 10) that seemed to relate to tuberculosis, which was highly prevalent in the early 1900s. The gamma values showed an incredibly high concentration (the gamma value equaled 1) of the tuberculosis topic in the December 1931 issue, so I looked at the document directly after searching tuberculosis in 1931 and finding that the New York Tuberculosis and Health Association did a yearly Christmas seal campaign to raise awareness and funds for tuberculosis treatment.
+  In the December 1931 issue, I discovered that the Christmas seal sale marked the "25th anniversary of the continuous, organized war on tuberculosis" in the U.S., which also explained why there was one major article in the issue that was devoted to the treatment of tuberculosis and a few mentions of it elsewhere. In "The Rationale of Weight Reduction," Dr. Francis G. Benedict noted that increased weight actually seemed to help people avoid contracting tuberculosis. However, the bulk of the issue's section that contains articles consists of Sigard Adolphus Knopf's "Climate in Tuberculosis and the Prevention of Relapses," which discusses climate in the treatment of tuberculosis patients. The article shows a link between psychological health and physical health, as it notes how patients who are in better psychological states tend to have better results with changing their climate, while some psychological states (Knopf explicitly mentions people prone to nostalgia, and patients who are hypochondriacs or prone to sadness) can negatively impact the recovery of those who are moved great distances for climate change as an aid in treatment. While Knopf's article clearly follows the trend of sanatorium based treatment, he notes the lack of adequate amounts of sanatoriums who can offer inpatient care long enough for patients to truly recover. The most important historical takeaway from the article though is Knopf's insistence that tuberculosis prevention is linked to improved living conditions, particularly among those in tenement housing in cities, which will be linked later to overall reform for housing and sanitation. This issue also contained notices for the annual seal campaign, which also included information about tuberculin and tuberculosis diagnosis.
+  
+  Topic modeling revealed a "tuberculosis issue" in the corpus that prompted me to look further at the specific issue from December 1931, which could have easily been missed if I was reading every issue by hand since I might not have had time to read them all. I did discover that there was a topic of tuberculosis that dominated part of the corpus, even though it really only appears in one issue (there is some evidence of the tuberculosis topic appearing later in the sample, but I did not investigate this). That being said, topic modeling can still cause some confusion for people who are not super familiar with the corpus. For example, I am not familiar with the history of physical education and I am aware that I probably don't understand some of the topics presented by topic modeling as well as someone who is more familiar with both the corpus and the history of physical education as a whole.
 
 
 ---
