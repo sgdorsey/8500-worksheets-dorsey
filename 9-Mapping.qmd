@@ -47,6 +47,13 @@ underground.coord <- undergroundRR %>% geocode(city = City, state = State, metho
 (@) Geocode the Boston Women Voters dataset. Note that the data does include street addresses but because they are broken into parts - street address number, street, etc - you'll need to combine them into a full address to pass to the geocoding function. 
 ```{r}
 data("BostonWomenVoters")
+head(BostonWomenVoters$Present.Residence)
+bwvprep <- BostonWomenVoters %>%
+  mutate(full.address = paste(Street.Number.on.April.1, Street.of.Residence.on.April.1, "Boston", "MA")) %>%
+  drop_na(Ward) %>%
+  slice(1:100)
+
+bwvcoord <- bwvprep %>% geocode(address = full.address, method='osm', lat = latitude, long = longitude)
 ```
 
 ### Maps with `ggplot()`
@@ -57,7 +64,7 @@ First we need to get a basemap. For this example we'll use the `map_data()` func
 
 (@) Look at the documentation for `map_data()`. Which geographies does this package provide access to?
 
->
+> This package includes county maps and state maps, as well as maps of France, Italy, New Zealand, the US, and 2 world maps.
 
 Lets load the base map data for the US. 
 ```{r}
@@ -66,7 +73,7 @@ usa <- map_data("state")
 
 (@) `map_data()` generates a data frame. Take a look at this data frame, what types of data are included? 
 
-> 
+> The longitude and latitude points that make up the borders of the states in the US, the group and order columns, and the region column, which includes the state. It also includes a subregion column that has the counties if you look at the county map.
 
 
 We can now pass this data to ggplot to create a simple basemap. When we wanted to create a bar plot using `ggplot()` we called `geom_bar`. When we wanted to create a line chart we used `geom_point()` and `geom_line()`. The sample principle applies here and `ggplot()` provides a geom for maps.
@@ -90,18 +97,54 @@ ggplot() +
 
 (@) This map looks slightly funny, but that is because the data includes entries outside of the contiguous United States. Try filtering out those entries and mapping this again. Can you change the color or size of the points? Can you add a title?
 ```{r}
+gayguides <- gayguides %>% filter(state %in% c("AL", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"))
 
+ggplot() + 
+  geom_map(data = usa, map = usa, aes(long, lat, map_id=region), fill = "lightgray", color = "black") +
+  geom_point(data = gayguides, mapping = aes(x = lon, y = lat, color = state), size = 3) + coord_fixed(1.3) + 
+  labs(title = "Gay Friendly Locations in the US in 1965")
 ```
 
 (@) Can you map just locations in South Carolina (on a basemap of SC)? 
 ```{r}
+data(gayguides)
+gayguidessc <- gayguides %>% filter(state == "SC")
+scmap <- usa %>% filter(region == "south carolina")
 
+ggplot() + 
+  geom_map(data = scmap, map = scmap, aes(long, lat, map_id=region), fill = "lightgray", color = "black") +
+  geom_point(data = gayguidessc, mapping = aes(x = lon, y = lat), color = "red") + coord_fixed(1.3)
 ```
 
 (@) Create a map that uses your geocoded data from the Boston Women Voters dataset. 
 ```{r}
+library(maps)
+boston <- map_data("county") %>% filter(region == "massachusetts" & subregion == "suffolk")
 
+ggplot() +
+  geom_map(data = boston, map = boston, aes(long, lat, map_id=region), fill = "lightgray", color = "navy") +
+  geom_point(data = bwvcoord, mapping = aes(x = longitude, y = latitude, color = factor(Ward)), size = 1) + coord_fixed(1.3) +
+  labs(title = "Women Voters in Boston by Ward")
 ```
+
+```{r}
+ma <- map_data("state") %>% filter(region == "massachusetts")
+
+ggplot() +
+  geom_map(data = ma, map = ma, aes(long, lat, map_id=region), fill = "lightgray", color = "navy") +
+  geom_point(data = bwvcoord, mapping = aes(x = longitude, y = latitude, color = factor(Ward)), size = 1) + coord_fixed(1.3) +
+  labs(title = "Women Voters in Boston by Ward")
+```
+
+```{r}
+bwvcoord <- bwvprep %>% geocode(address = full.address, method='osm', lat = latitude, long = longitude)
+
+bwvcoord <- bwvcoord %>% 
+  arrange(longitude) %>%
+  filter(latitude >= 42.2875)
+```
+
+#The state map holds everything, but I don't know if the boundaries were redone at one point and that's why some of my points are technically outside Boston.
 
 Lets return to the recreational data for a minute.
 
@@ -115,13 +158,13 @@ We can do that by making a small adjustment to the map we made previously. First
 ```{r}
 ggplot() + 
   geom_map(data = usa, map = usa, aes(long, lat, map_id=region), fill = "lightgray", color = "black") +
-  geom_point(data = rec.data.coordinates, mapping = aes(x=longitude, y=latitude))
+  geom_point(data = rec.data.coordinates, mapping = aes(x=longitude, y=latitude)) + coord_fixed(1.3)
 ```
 
 ```{r}
 ggplot() + 
   geom_map( data = usa, map = usa, aes(long, lat, map_id=region), fill="white", color="gray") +
-  geom_point(data = rec.data.coordinates, mapping = aes(x=longitude, y=latitude, size=total_expenditures))
+  geom_point(data = rec.data.coordinates, mapping = aes(x=longitude, y=latitude, size=total_expenditures)) + coord_fixed(1.3)
 ```
 
 ---
