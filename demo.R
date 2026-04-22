@@ -231,3 +231,25 @@ tiny_corpus %>%
 #gamma - probability of each document being generated from each topic (high for a particular topic and document suggests the doc is heavily influenced by that topic - means a large proportion of its words are likely drawn from that topic's word distribution)
   #if a word you expect to see one place pops up in another, go look at it (WWI spiking in 1930)
   #can plot over time
+
+
+#April 20
+Things needed for mapping
+- data (with longitude and latitude coordinates)
+- shape file - what you load into a mapping software to generate the map (US is built into R, historical maps come from nhgis)
+- you take data, send it to the API, API sends back the coordinates
+- Google maps API is good (charges after a certain point, but you're probably fine')
+- Open Straight maps - no API, but use Google Maps if you need something more specific at a larger scale()
+- If you have somewhere that doesn't exist' anymore - you can find the the coordinates manually
+- For worksheet, take a slice of the dataset because it takes time
+- locations in hawaii and alaska can skew 
+- in VS Code - add coord_fixed(1.3) to the background 
+- ggplot is good for exploratory and static map
+- leaflet is the way to do interactive
+- gold standard for mapping is d3js.org
+- mapbox is also used in gayguides
+- difference in rendering
+  - d3js builds the visualization on the screen in real time (browser based), maps with network graph on top is good for this, 
+  - shiny is server based
+- at the city level, you might want to place points by .hand.  
+- Geochecker

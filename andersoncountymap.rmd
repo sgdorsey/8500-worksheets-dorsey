@@ -1,0 +1,62 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+
+This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+
+## Libraries and Packages
+```{r message=FALSE, warning=FALSE}
+library(ggplot2) 
+library(tidyverse)
+library(DigitalMethodsData)
+library(ggmap)
+library(tidygeocoder)
+library(maps)
+library(forcats)
+```
+
+## Load in map_data
+```{r}
+mill.church.anderson <- read.csv("/Users/sharondorsey/Library/CloudStorage/OneDrive-ClemsonUniversity/Year 1/8540/mill_church_anderson.csv") %>%
+  mutate(denomination = fct_collapse(denomination,
+  Pentecostal = c("Church of God (Headquarters Cleveland, Tenn.)", "Holiness (Headquarters Cleveland, Tenn.)", "Holliness Headquarters in Tenn.", "Holiness (Headquarters Cleveland, Tenn.)"),
+  Methodist = c("Methodist Episcopal South", "Methodist", "Wesleyan Methodist"),
+  Presbyterian = c("Pres. US", "Presbyterian"))) %>%
+  mutate(longitude = -abs(longitude))
+```
+
+## Base Map setup
+```{r}
+county <- map_data("county")
+anderson <- county %>% filter(region == "south carolina" & subregion == "anderson")
+```
+
+## Set up the Map
+```{r}
+chart <- ggplot() +
+  geom_polygon(data = anderson, aes(x = long, y = lat, group = group),
+               fill = "lightgray", color = "black") +
+  geom_point(data = mill.church.anderson, mapping = aes(x = longitude, y = latitude, color = factor(outcome_id))) +
+  scale_color_manual(values = c("1" = "#22f5e0", "2" = "black", "3" = "#02ad24", "4" = "#5504bf", "5" = "#ff7a05", "6" = "#ff0505")) +
+  coord_fixed(1.3) + facet_wrap(~denomination)
+```
+
+```{r}
+visualization <- chart +
+  scale_color_manual(
+    values = c("1" = "#22f5e0", "2" = "black", "3" = "#02ad24", "4" = "#5504bf", "5" = "#ff7a05", "6" = "#ff0505"),
+    labels = c("1" = "Church is Unchanged", "2" = "Church Closed", "3" = "Building Still Used for Religious Functions", "4" = "Building Used for Nonreligious Purpose", "5" = "Congregation has Moved", "6" = "Unknown")) +
+  labs(title = "Outcomes of Mill Village Churches in Anderson County After Deindustrialization, by Denomination", x = "Longitude", y = "Latitude", color = "Legend")
+```
+
+## Save visualization
+```{r}
+ggsave("outcomesbydenomination.jpeg", plot = visualization, width = 10, height = 6, dpi = 600)
+```

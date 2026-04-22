@@ -37,7 +37,10 @@ Now we have latitude and longitude coordinates for our data.
 
 (@) Use this approach to geocode the `UndergroundRR` data. 
 ```{r}
+data("UndergroundRR")
+head("UndergroundRR")
 
+underground.coord <- undergroundRR %>% geocode(city = City, state = State, method='osm', lat= latitude, long = longitude)
 ```
 
 
