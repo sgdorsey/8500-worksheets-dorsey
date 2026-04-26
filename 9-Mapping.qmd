@@ -206,7 +206,7 @@ ggplot(data = nhgis, aes(fill = AZF001)) +
 
 ```
 (@) In the code above, why filter out Hawaii and Alaska? Try commenting out that line and rerunning the code. What happens? Why might we want to do this? Why might we not want to do this? How does it shape the interpretation?
->
+> Including Alaska and Hawaii may make the map look weird because it has to stretch the map to include those points. By filtering to the contiguous 48 states, the map looks more normal and is easier to see points (to me at least). Obviously if a dataset includes points in Hawaii and Alaska, you wouldn't want to filter those two places out. I could see a scenario where you're potentially mapping networks of British-American communications related to the acquisition of Alaska being a reason to not filter that out. However, stretching the map looks like it would collapse multiple points in the northeast together because they are close together, which could cause someone to interpret influence in the northeast being more important than it actually is.
 
 This is a great start. But using AZF001 (Native born males) as the fill does not create a useful visualization. It doesn't give us a sense of the proportion of that data. There are multiple problems with the map as it is, but one is that the color scale makes this incredibly hard to read. We can fix that by using a scale to break the values of AZF001 into bins and assign each a color. R has a function for this. It comes from the scales pacakge which you may need to install.
 
@@ -220,23 +220,27 @@ This is now much more readable but the numbers represented are simply the raw po
 
 (@) First, create a variable called total_male_pop, with the total foreign and native born male population by summing the variables AZF001 and AZF003. 
 ```{r}
-
+total_male_pop <- nhgis %>%
+  mutate(total_male_pop = AZF001 + AZF003)
 ```
 
 (@) Now, use the total_male_pop variable and create a variable for the the percentage of foreign born males.
 ```{r}
-
+percentage.foreign.male <- total_male_pop %>%
+  mutate(percentforeignmale = (AZF003/total_male_pop))
 ```
 
 (@) Now map your result. You'll want to replicate the code from the example above, but this time add another layer to the plot - a scale. Here we'll use this scale `scale_fill_continuous("", labels = scales::percent)`
 
 Before you write that code, look up the documentation for the above code (and look at the examples). What does it do? 
 
->
+> This code tells the computer to multiply the valus in the percentforeignmale column to be percentages and use those values to make up the scale.
 
 Now create the map: 
 ```{r}
-
+library(scales)
+ggplot(data = percentage.foreign.male, aes(fill = percentforeignmale)) +
+  geom_sf() + scale_fill_continuous("Percentage Foreign Born Male Population", labels = scales::percent)
 ```
 
 ### Leaflet
@@ -266,12 +270,12 @@ leaflet(data=rec.data.coordinates) %>% addTiles() %>% addMarkers(~longitude, ~la
 
 (@) Use leaflet to map a dataset of your choice: 
 ```{r}
-
+leaflet(data=bwvcoord) %>% addTiles() %>% addMarkers(~longitude, ~latitude, popup = paste("This woman's occupation was ", bwvcoord$Occupation, ".", sep=""))
 ```
 
 (@) Explain what choices you made in building this map? Why might you use leaflet over ggplot? When would ggplot be more desirable? 
 
->
+> I chose to use the Boston Women's Voters dataset and map the occupation of the women. I could see leaflet being more useful for exploratory maps that you want to click on for more information (or if you have a bunch of points that are layered on top of one another), or if you need to map a lot of information in each point. I would use ggplot to map things for comparison, particularly using the facet wrap option to see changes in different groups, over time, etc.
 
 
 ### Exercises
