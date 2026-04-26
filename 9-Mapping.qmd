@@ -282,6 +282,39 @@ leaflet(data=bwvcoord) %>% addTiles() %>% addMarkers(~longitude, ~latitude, popu
 For the next portion of this worksheet you will use some data about national parks that Dr. Barczewski created. Using this data (link below) you should use ggplot (charts, maps) and other mapping tools to come up with several ways to visualize it. You should try to think about this from the perspective of her larger book project, how could you visualize this data to help her make a compelling argument? See the email I send for more details about her project. Pick a dimension and make maps based on it.
 
 ```{r}
+library(usmap)
+usmap <- map_data(usmap)
 parks <- read.csv("https://raw.githubusercontent.com/regan008/DigitalMethodsData/main/raw/parks-geocoded.csv")
 ```
 
+```{r}
+parks_west <- c("Washington", "Oregon", "Montana", "Wyoming", "Idaho", "Nevada", "California", "Utah", "Colorado", "Arizona", "New Mexico", "Hawaii", "Alaska")
+parks_midwest <- c("North Dakota", "South Dakota", "Nebraska", "Kansas", "Iowa", "Minnesota", "Missouri", "Wisconsin", "Michigan", "Illinois", "Indiana", "Ohio")
+parks_south <- c("Texas", "Oklahoma", "Arkansas", "Louisiana", "Mississippi", "Alabama", "Tennessee", "Kentucky", "West Virginia", "Virginia", "Georgia", "South Carolina", "North Carolina", "Florida", "Maryland", "Delaware")
+parks_northeast <- c("Pennsylvania", "New Jersey", "New York", "Vermont", "New Hampshire", "Massachussetts", "Rhode Island", "Connecticut", "Maine")
+
+southern.parks <- parks %>%
+  filter(state_region_province %in% parks_south)
+```
+
+```{r}
+grouped.parks <- parks %>%
+  mutate(region = case_when(
+    state_region_province %in% parks_west ~ "west",
+    state_region_province %in% parks_midwest ~ "midwest",
+    state_region_province %in% parks_south ~ "south",
+    state_region_province %in% parks_northeast ~ "northeast")) %>%
+    filter(country == "United States")
+
+ggplot() + 
+  geom_map(data = usa, map = usa, aes(long, lat, map_id=region), fill = "lightgray", color = "black") +
+  geom_point(data = grouped.parks, mapping = aes(x=lon, y=lat)) + coord_fixed(1.3)
+
+# this map doesn't have Alaska and Hawaii, but I can't figure out how to fix this
+```
+
+```{r}
+parks.map <- leaflet()
+parks.map %>% addTiles()
+leaflet(data=parks) %>% addTiles() %>% addMarkers(~lon, ~lat, popup = paste("This park is ", parks$park, ". ", "The closest city is ", parks$closest_city, ", which is ", parks$distance_from_closest_city, " km away .", sep=""))
+```
