@@ -283,7 +283,7 @@ For the next portion of this worksheet you will use some data about national par
 
 ```{r}
 library(usmap)
-usmap <- map_data(usmap)
+usmap <- map_data("usmap")
 parks <- read.csv("https://raw.githubusercontent.com/regan008/DigitalMethodsData/main/raw/parks-geocoded.csv")
 ```
 
@@ -310,6 +310,7 @@ ggplot() +
   geom_map(data = usa, map = usa, aes(long, lat, map_id=region), fill = "lightgray", color = "black") +
   geom_point(data = grouped.parks, mapping = aes(x=lon, y=lat)) + coord_fixed(1.3)
 
+plot_usmap(regions = "states") + labs(title = "USA Map", subtitle = "AK and HI included")
 # this map doesn't have Alaska and Hawaii, but I can't figure out how to fix this
 ```
 
